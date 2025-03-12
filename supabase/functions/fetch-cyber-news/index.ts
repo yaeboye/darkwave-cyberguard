@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY')
+    const NEWSAPI_KEY = "09ba4a2a52bf455d869523c6500ac2dd"
     if (!NEWSAPI_KEY) {
       throw new Error('NEWSAPI_KEY is not set')
     }

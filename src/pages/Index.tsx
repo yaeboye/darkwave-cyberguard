@@ -6,6 +6,7 @@ import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import HomeNewsSection from '../components/HomeNewsSection';
 
 const Index = () => {
   const [showTerminalText, setShowTerminalText] = useState(false);
@@ -210,6 +211,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+        
+        {/* News Section */}
+        <HomeNewsSection />
         
         {/* CTA Section */}
         <section className="py-20 bg-cyber-black relative overflow-hidden">
