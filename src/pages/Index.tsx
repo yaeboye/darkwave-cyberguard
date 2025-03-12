@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, Lock, FileText, AlertTriangle, Tool, ChevronRight } from 'lucide-react';
+import { Shield, Lock, FileText, AlertTriangle, Wrench, ChevronRight } from 'lucide-react';
 import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
@@ -55,7 +54,7 @@ const Index = () => {
                 
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                   <Link to="/tools" className="cyber-button flex items-center justify-center bg-cyber-blue text-black hover:text-black">
-                    <Tool className="mr-2 h-5 w-5" />
+                    <Wrench className="mr-2 h-5 w-5" />
                     Explore Tools
                   </Link>
                   <Link to="/login" className="cyber-button flex items-center justify-center">
@@ -80,6 +79,7 @@ const Index = () => {
                         text="Initializing security protocols..."
                         className="text-cyber-green mb-2"
                         typingSpeed={30}
+                        delay={0}
                       />
                       
                       <TerminalText
@@ -182,7 +182,7 @@ const Index = () => {
               
               <div className="cyber-card group">
                 <div className="flex items-center mb-4">
-                  <Tool className="h-8 w-8 text-cyber-yellow mr-3" />
+                  <Wrench className="h-8 w-8 text-cyber-yellow mr-3" />
                   <h3 className="font-cyber text-xl font-semibold text-white">Hash Generator</h3>
                 </div>
                 <p className="text-gray-400 mb-4">

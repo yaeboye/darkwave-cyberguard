@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Lock, Shield, Hash, FileText, AlertTriangle, 
-  QrCode, Key, Globe, Search, Database, Tool
+  QrCode, Key, Globe, Search, Database, Wrench
 } from 'lucide-react';
 import CyberHeader from '../components/CyberHeader';
 import Navbar from '../components/Navbar';
@@ -122,7 +122,7 @@ const Tools = () => {
                   {tool.description}
                 </p>
                 <div className={`flex justify-end text-cyber-${tool.color} mt-auto`}>
-                  <Tool className="h-5 w-5" />
+                  <Wrench className="h-5 w-5" />
                 </div>
               </Link>
             ))}

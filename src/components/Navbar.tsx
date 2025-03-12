@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Shield, Monitor, Cpu, Terminal, FileText, Tool, LogIn } from 'lucide-react';
+import { Menu, X, Shield, Monitor, Cpu, Terminal, FileText, Wrench, LogIn } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
               <span>Home</span>
             </Link>
             <Link to="/tools" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
-              <Tool className="mr-1 h-4 w-4" />
+              <Wrench className="mr-1 h-4 w-4" />
               <span>Tools</span>
             </Link>
             <Link to="/news" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
@@ -68,7 +68,7 @@ const Navbar: React.FC = () => {
               className="block font-cyber py-2 px-4 text-white hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
               onClick={toggleMenu}
             >
-              <Tool className="mr-2 h-4 w-4" />
+              <Wrench className="mr-2 h-4 w-4" />
               <span>Tools</span>
             </Link>
             <Link 

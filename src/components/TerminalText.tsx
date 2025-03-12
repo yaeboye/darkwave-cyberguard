@@ -7,6 +7,7 @@ interface TerminalTextProps {
   className?: string;
   blinkCursor?: boolean;
   onComplete?: () => void;
+  delay?: number; // Add delay property to interface
 }
 
 const TerminalText: React.FC<TerminalTextProps> = ({
@@ -14,16 +15,30 @@ const TerminalText: React.FC<TerminalTextProps> = ({
   typingSpeed = 40,
   className = '',
   blinkCursor = true,
-  onComplete
+  onComplete,
+  delay = 0 // Default to 0 if not provided
 }) => {
   const [displayText, setDisplayText] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasDelayCompleted, setHasDelayCompleted] = useState(delay === 0);
+
+  useEffect(() => {
+    // Handle initial delay before typing starts
+    if (!hasDelayCompleted) {
+      const delayTimer = setTimeout(() => {
+        setHasDelayCompleted(true);
+        setIsTyping(true);
+      }, delay);
+      
+      return () => clearTimeout(delayTimer);
+    }
+  }, [delay, hasDelayCompleted]);
 
   useEffect(() => {
     let currentIndex = 0;
     let interval: NodeJS.Timeout;
 
-    if (isTyping) {
+    if (isTyping && hasDelayCompleted) {
       interval = setInterval(() => {
         if (currentIndex < text.length) {
           setDisplayText(text.substring(0, currentIndex + 1));
@@ -39,7 +54,7 @@ const TerminalText: React.FC<TerminalTextProps> = ({
     return () => {
       clearInterval(interval);
     };
-  }, [text, typingSpeed, isTyping, onComplete]);
+  }, [text, typingSpeed, isTyping, onComplete, hasDelayCompleted]);
 
   return (
     <div className={`font-cyber ${className}`}>
