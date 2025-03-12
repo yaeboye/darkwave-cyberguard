@@ -72,128 +72,14 @@ const News = () => {
         throw error;
       }
       
-      if (data && data.length > 0) {
+      if (data) {
         setNews(data as NewsArticle[]);
-      } else {
-        insertMockData();
       }
     } catch (error: any) {
       console.error('Error fetching news:', error);
       setError(error.message || 'Failed to fetch news articles');
     } finally {
       setLoading(false);
-    }
-  };
-  
-  const insertMockData = async () => {
-    const mockNewsData = [
-      {
-        title: "Critical Vulnerability Discovered in Popular Software",
-        summary: "Security researchers have found a zero-day vulnerability affecting millions of users worldwide. The flaw allows attackers to execute remote code and gain system privileges.",
-        content: `Security researchers at a leading cybersecurity firm have discovered a critical zero-day vulnerability in widely-used software that could potentially affect millions of users worldwide. The vulnerability, tracked as CVE-2023-XXXXX, allows attackers to execute arbitrary code remotely and escalate privileges on affected systems.
-
-The affected software is used by many Fortune 500 companies and government agencies, making this vulnerability particularly concerning. Experts are urging users to update their systems immediately as patches have been released.
-
-"This is one of the most serious vulnerabilities we've seen this year," said the lead researcher. "The ease of exploitation combined with the widespread use of this software creates a perfect storm for attackers."`,
-        source: "CyberNews",
-        author: "Jane Smith",
-        category: "Vulnerability",
-        image_url: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        published_at: new Date().toISOString()
-      },
-      {
-        title: "New Ransomware Strain Targets Healthcare Organizations",
-        summary: "A sophisticated ransomware campaign is specifically targeting hospitals and healthcare providers. The attack encrypts patient records and demands substantial cryptocurrency payments.",
-        content: `A new, highly sophisticated ransomware strain dubbed "MediLock" has been observed targeting healthcare organizations across North America and Europe. This ransomware variant specifically targets electronic health record systems and medical imaging databases.
-
-Unlike previous ransomware attacks, MediLock appears to be surgically precise in its targeting, suggesting the attackers have deep knowledge of healthcare IT infrastructure. The ransomware encrypts patient records and medical images, rendering them inaccessible until a ransom is paid in cryptocurrency.
-
-Cybersecurity experts are warning that this campaign appears to be the work of a nation-state backed group rather than conventional cybercriminals, raising concerns about potential data exfiltration beyond the encryption attack.`,
-        source: "Security Weekly",
-        author: "Michael Chen",
-        category: "Ransomware",
-        image_url: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        published_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        title: "Government Issues Advisory on State-Sponsored Hacking",
-        summary: "The Cybersecurity and Infrastructure Security Agency (CISA) has released a joint advisory warning about increased state-sponsored cyber operations targeting critical infrastructure.",
-        content: `The Cybersecurity and Infrastructure Security Agency (CISA), in coordination with the FBI and NSA, has issued a joint advisory warning of sophisticated, persistent threats from state-sponsored threat actors targeting critical infrastructure sectors.
-
-According to the advisory, these advanced persistent threat (APT) groups are exploiting known vulnerabilities in internet-facing systems, deploying custom malware, and using advanced social engineering techniques to breach sensitive networks.
-
-The sectors most at risk include energy, water, transportation, and communications. The advisory contains detailed technical indicators of compromise and recommended mitigation strategies for organizations in these sectors.
-
-"These are not opportunistic attacks," said the CISA Director. "These are calculated campaigns designed to gain persistent access to critical systems."`,
-        source: "Tech Security Today",
-        author: "Robert Johnson",
-        category: "Government",
-        image_url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        published_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        title: "Major Data Breach Exposes Millions of User Records",
-        summary: "A popular online service has confirmed a massive data breach affecting over 50 million users. Exposed data includes email addresses, passwords, and personal information.",
-        content: `A major online service provider has confirmed that it suffered a significant data breach affecting approximately 50 million users worldwide. The breach was discovered after user data appeared for sale on a dark web marketplace.
-
-According to the company's statement, the breach occurred due to an API vulnerability that has since been patched. The exposed data includes email addresses, hashed passwords, names, phone numbers, and in some cases, payment information.
-
-Cybersecurity researchers who have analyzed samples of the leaked data confirm its authenticity and warn that despite the passwords being hashed, weaker passwords could be cracked using modern computing resources.
-
-The company is requiring password resets for all users and has enabled mandatory two-factor authentication. They are also offering free credit monitoring for affected users.`,
-        source: "Breach Report",
-        author: "Sarah Williams",
-        category: "Data Breach",
-        image_url: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        published_at: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        title: "New Phishing Campaign Targets Remote Workers",
-        summary: "Security experts have identified a sophisticated phishing operation aimed at remote workers. The attack uses fake collaboration tool notifications to steal credentials.",
-        content: `Cybersecurity researchers have uncovered a sophisticated phishing campaign specifically targeting remote workers who use popular collaboration tools such as Slack, Microsoft Teams, and Google Workspace.
-
-The phishing emails mimic notifications from these platforms, informing recipients that they have missed important messages or that their account requires attention. Users who click on the links are directed to convincing clone sites designed to harvest login credentials.
-
-What makes this campaign particularly effective is its use of context-aware social engineering. The attackers appear to have knowledge of organizational structures and ongoing projects, making their phishing attempts more convincing.
-
-"The level of research these attackers are doing before sending these phishing emails is unprecedented," noted a senior threat analyst. "They're crafting messages that reference real projects and colleagues."`,
-        source: "Phishing Alert",
-        author: "David Kim",
-        category: "Phishing",
-        image_url: "https://images.unsplash.com/photo-1593642532744-d377ab507dc8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        published_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        title: "AI-Powered Cybersecurity Solutions on the Rise",
-        summary: "The cybersecurity industry is increasingly turning to artificial intelligence to combat evolving threats. New AI-powered tools can detect anomalies and respond to incidents faster than human analysts.",
-        content: `The cybersecurity industry is witnessing a significant shift toward AI-powered security solutions as organizations struggle to keep pace with the volume and sophistication of modern threats.
-
-These next-generation security platforms employ machine learning algorithms to establish baseline network behavior and identify anomalies that might indicate a breach. Unlike traditional signature-based systems, AI security tools can detect previously unknown threats based on behavioral analysis.
-
-A recent industry report indicates that organizations implementing AI-powered security solutions have reduced their breach detection time by an average of 73% and have experienced 45% fewer successful attacks compared to those using conventional security measures.
-
-"The volume of threats has simply outpaced human capability," explained a cybersecurity executive. "AI doesn't replace human analysts, but it dramatically expands what they can monitor and how quickly they can respond."`,
-        source: "Tech Innovations",
-        author: "Lisa Chen",
-        category: "Technology",
-        image_url: "https://images.unsplash.com/photo-1676288173684-d19c075c6e0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        published_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
-      }
-    ];
-
-    try {
-      const { error } = await supabase
-        .from('news_articles')
-        .insert(mockNewsData);
-
-      if (error) {
-        throw error;
-      }
-
-      fetchNews();
-    } catch (error: any) {
-      console.error('Error inserting mock news data:', error);
-      setError(error.message || 'Failed to initialize news data');
     }
   };
   
