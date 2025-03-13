@@ -25,9 +25,9 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-    // Fetch cybersecurity news from NewsAPI
+    // Fetch cybersecurity news from NewsAPI with improved query and more results
     const response = await fetch(
-      `https://newsapi.org/v2/everything?q=cybersecurity&language=en&sortBy=publishedAt&pageSize=10`,
+      `https://newsapi.org/v2/everything?q=cybersecurity OR hacking OR "data breach" OR ransomware OR malware&language=en&sortBy=publishedAt&pageSize=20`,
       {
         headers: {
           'X-Api-Key': NEWSAPI_KEY,
@@ -37,35 +37,69 @@ Deno.serve(async (req) => {
 
     const data = await response.json()
 
-    if (data.status === 'ok' && data.articles) {
-      const articles = data.articles.map((article: any) => ({
-        title: article.title,
-        summary: article.description || '',
-        content: article.content || '',
-        source: article.source.name,
-        author: article.author,
-        category: 'Technology', // Default category
-        image_url: article.urlToImage,
-        published_at: article.publishedAt,
-      }))
+    if (data.status === 'ok' && data.articles && data.articles.length > 0) {
+      // Map categories based on content for better categorization
+      const articles = data.articles.map((article: any) => {
+        let category = 'Technology'
+        const title = article.title?.toLowerCase() || ''
+        const description = article.description?.toLowerCase() || ''
+        
+        if (title.includes('ransomware') || description.includes('ransomware')) {
+          category = 'Ransomware'
+        } else if (title.includes('phishing') || description.includes('phishing')) {
+          category = 'Phishing'
+        } else if (title.includes('vulnerability') || description.includes('vulnerability') || 
+                  title.includes('exploit') || description.includes('exploit')) {
+          category = 'Vulnerability'
+        } else if (title.includes('breach') || description.includes('breach') || 
+                  title.includes('leak') || description.includes('leak')) {
+          category = 'Data Breach'
+        } else if (title.includes('government') || description.includes('government') ||
+                  title.includes('regulation') || description.includes('regulation')) {
+          category = 'Government'
+        }
+        
+        return {
+          title: article.title,
+          summary: article.description || 'No description available',
+          content: article.content || article.description || 'No content available',
+          source: article.source.name || 'Unknown Source',
+          author: article.author || 'Unknown Author',
+          category: category,
+          image_url: article.urlToImage || 'https://via.placeholder.com/800x400?text=Cybersecurity+News',
+          published_at: article.publishedAt || new Date().toISOString(),
+        }
+      })
 
-      const { error } = await supabase
-        .from('news_articles')
-        .insert(articles)
+      console.log(`Fetched ${articles.length} articles from NewsAPI`)
 
-      if (error) throw error
+      // Clear existing articles first to avoid duplicates
+      await supabase.from('news_articles').delete().gte('id', '0')
+      
+      // Insert the articles in smaller batches to avoid issues
+      const batchSize = 5
+      for (let i = 0; i < articles.length; i += batchSize) {
+        const batch = articles.slice(i, i + batchSize)
+        const { error } = await supabase.from('news_articles').insert(batch)
+        
+        if (error) {
+          console.error('Error inserting batch:', error)
+          throw error
+        }
+      }
 
       return new Response(
-        JSON.stringify({ success: true }),
+        JSON.stringify({ success: true, count: articles.length }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200,
         }
       )
     } else {
-      throw new Error('Failed to fetch news')
+      throw new Error('Failed to fetch news or no articles returned')
     }
   } catch (error) {
+    console.error('Error in fetch-cyber-news function:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       {

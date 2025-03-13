@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, Lock, FileText, AlertTriangle, Wrench, ChevronRight } from 'lucide-react';
+import { Shield, Lock, FileText, AlertTriangle, Wrench, ChevronRight, Key } from 'lucide-react';
 import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
@@ -141,6 +142,20 @@ const Index = () => {
               
               <div className="cyber-card group">
                 <div className="flex items-center mb-4">
+                  <Key className="h-8 w-8 text-cyber-green mr-3" />
+                  <h3 className="font-cyber text-xl font-semibold text-white">Password Manager</h3>
+                </div>
+                <p className="text-gray-400 mb-4">
+                  Securely store and organize all your passwords in an encrypted vault.
+                </p>
+                <Link to="/tools/password-manager" className="flex items-center text-cyber-green hover:text-cyber-blue transition-colors">
+                  Explore
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
+              </div>
+              
+              <div className="cyber-card group">
+                <div className="flex items-center mb-4">
                   <Shield className="h-8 w-8 text-cyber-purple mr-3" />
                   <h3 className="font-cyber text-xl font-semibold text-white">Encryption Suite</h3>
                 </div>
@@ -190,20 +205,6 @@ const Index = () => {
                   Create and verify cryptographic hashes using various algorithms.
                 </p>
                 <Link to="/tools/hash-generator" className="flex items-center text-cyber-yellow hover:text-cyber-blue transition-colors">
-                  Explore
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
-              
-              <div className="cyber-card group">
-                <div className="flex items-center mb-4">
-                  <Shield className="h-8 w-8 text-cyber-blue mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Data Protection</h3>
-                </div>
-                <p className="text-gray-400 mb-4">
-                  Check if your email has been exposed in data breaches.
-                </p>
-                <Link to="/tools/data-breach" className="flex items-center text-cyber-blue hover:text-cyber-purple transition-colors">
                   Explore
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
