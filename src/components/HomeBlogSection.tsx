@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { ChevronRight, Book, Calendar, AlertCircle } from 'lucide-react';
 
 interface BlogPost {
@@ -20,7 +19,7 @@ const HomeBlogSection = () => {
     const fetchBlogPosts = async () => {
       setLoading(true);
       try {
-        // Fetch the RSS feed from scaremedia.blogspot.com
+        // Use a CORS proxy to fetch the RSS feed from scaremedia.blogspot.com
         const response = await fetch(
           `https://api.allorigins.win/get?url=${encodeURIComponent(
             'https://scaremedia.blogspot.com/feeds/posts/default?alt=rss'
@@ -42,6 +41,9 @@ const HomeBlogSection = () => {
         const xmlDoc = parser.parseFromString(data.contents, 'text/xml');
         const items = xmlDoc.querySelectorAll('item');
         
+        // For debugging
+        console.log('Found items:', items.length);
+        
         const parsedPosts: BlogPost[] = [];
         
         items.forEach((item) => {
@@ -58,15 +60,18 @@ const HomeBlogSection = () => {
             thumbnail = imgMatch[1];
           }
           
+          console.log('Parsed post:', { title, link, published });
+          
           parsedPosts.push({
             title,
             link,
             published,
             content,
-            thumbnail: thumbnail || '/placeholder.svg'
+            thumbnail: thumbnail || 'https://placehold.co/600x400/252a33/e1e7ef?text=CyberGuard'
           });
         });
         
+        console.log('Total parsed posts:', parsedPosts.length);
         setBlogs(parsedPosts.slice(0, 3)); // Get the 3 most recent posts
       } catch (error: any) {
         console.error('Error fetching blog posts:', error);
