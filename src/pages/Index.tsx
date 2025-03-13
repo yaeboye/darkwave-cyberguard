@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import HomeNewsSection from '../components/HomeNewsSection';
 import HomeBlogSection from '../components/HomeBlogSection';
+import TrendingThreats from '../components/TrendingThreats';
 
 const Index = () => {
   const [showTerminalText, setShowTerminalText] = useState(false);
@@ -211,6 +212,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+        
+        {/* Trending Threats Section - NEW */}
+        <TrendingThreats />
         
         {/* Blog Section */}
         <HomeBlogSection />
