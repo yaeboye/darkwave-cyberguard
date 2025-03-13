@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -8,12 +7,12 @@ import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import HomeNewsSection from '../components/HomeNewsSection';
+import HomeBlogSection from '../components/HomeBlogSection';
 
 const Index = () => {
   const [showTerminalText, setShowTerminalText] = useState(false);
 
   useEffect(() => {
-    // Show terminal text after a short delay
     const timer = setTimeout(() => {
       setShowTerminalText(true);
     }, 500);
@@ -212,6 +211,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+        
+        {/* Blog Section */}
+        <HomeBlogSection />
         
         {/* News Section */}
         <HomeNewsSection />
