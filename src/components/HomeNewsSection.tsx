@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Newspaper, Calendar, AlertCircle } from 'lucide-react';
+import { ChevronRight, Newspaper, Calendar, AlertCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface NewsArticle {
   id: string;
@@ -17,32 +18,86 @@ const HomeNewsSection = () => {
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+  
+  const fetchNews = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('news_articles')
+        .select('id, title, summary, published_at, category, image_url')
+        .order('published_at', { ascending: false })
+        .limit(3);
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (data && data.length > 0) {
+        setNews(data);
+        console.log('Fetched news successfully:', data);
+      } else {
+        console.log('No news data available, triggering refresh');
+        // If no news is available, trigger a refresh from the edge function
+        await triggerNewsRefresh();
+      }
+    } catch (error: any) {
+      console.error('Error fetching news:', error);
+      setError(error.message || 'Failed to fetch news articles');
+      toast({
+        title: "Error fetching news",
+        description: "Please try again later or check your connection.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const triggerNewsRefresh = async () => {
+    try {
+      setLoading(true);
+      toast({
+        title: "Refreshing news data",
+        description: "This may take a moment..."
+      });
+      
+      const response = await fetch('/api/fetch-cyber-news', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to refresh news data');
+      }
+      
+      const result = await response.json();
+      console.log('News refresh result:', result);
+      
+      if (result.success) {
+        toast({
+          title: "News updated",
+          description: `Successfully loaded ${result.count} articles`
+        });
+        // Refetch news after a short delay to allow DB to update
+        setTimeout(fetchNews, 1000);
+      }
+    } catch (error: any) {
+      console.error('Error refreshing news:', error);
+      setError(error.message || 'Failed to refresh news data');
+      toast({
+        title: "Error refreshing news",
+        description: error.message || "Please try again later",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   
   useEffect(() => {
-    const fetchNews = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('news_articles')
-          .select('id, title, summary, published_at, category, image_url')
-          .order('published_at', { ascending: false })
-          .limit(3);
-        
-        if (error) {
-          throw error;
-        }
-        
-        if (data) {
-          setNews(data);
-        }
-      } catch (error: any) {
-        console.error('Error fetching news:', error);
-        setError(error.message || 'Failed to fetch news articles');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
     fetchNews();
     
     const channel = supabase
@@ -50,6 +105,7 @@ const HomeNewsSection = () => {
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'news_articles' }, 
         () => {
+          console.log('News update detected via realtime subscription');
           fetchNews();
         }
       )
@@ -85,10 +141,20 @@ const HomeNewsSection = () => {
             </p>
           </div>
           
-          <Link to="/news" className="mt-4 md:mt-0 cyber-button flex items-center">
-            <Newspaper className="mr-2 h-5 w-5" />
-            View All News
-          </Link>
+          <div className="mt-4 md:mt-0 flex space-x-3">
+            <button 
+              onClick={triggerNewsRefresh} 
+              className="cyber-button-small flex items-center bg-cyber-darkgray hover:bg-cyber-blue"
+              disabled={loading}
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+            <Link to="/news" className="cyber-button flex items-center">
+              <Newspaper className="mr-2 h-5 w-5" />
+              View All News
+            </Link>
+          </div>
         </div>
         
         {error && (
@@ -121,6 +187,10 @@ const HomeNewsSection = () => {
                       src={article.image_url || '/placeholder.svg'} 
                       alt={article.title} 
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      onError={(e) => {
+                        // Fallback for image load errors
+                        (e.target as HTMLImageElement).src = '/placeholder.svg';
+                      }}
                     />
                     <div className="absolute top-0 right-0 bg-cyber-blue px-2 py-1">
                       <span className="text-xs font-cyber text-black">{article.category}</span>
@@ -154,7 +224,14 @@ const HomeNewsSection = () => {
               <div className="col-span-3 text-center py-12">
                 <Newspaper className="h-12 w-12 text-gray-600 mx-auto mb-4" />
                 <h3 className="text-xl font-cyber text-gray-400">No news articles found</h3>
-                <p className="text-gray-500">Check back later for updates</p>
+                <p className="text-gray-500 mb-4">Click refresh to load the latest cybersecurity news</p>
+                <button 
+                  onClick={triggerNewsRefresh} 
+                  className="cyber-button-small flex items-center mx-auto"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Load News
+                </button>
               </div>
             )}
           </div>
