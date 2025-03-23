@@ -34,8 +34,10 @@ const HomeNewsSection = () => {
       }
       
       if (data && data.length > 0) {
-        setNews(data);
-        console.log('Fetched news successfully:', data);
+        // Remove any duplicates by id
+        const uniqueNews = Array.from(new Map(data.map(item => [item.id, item])).values());
+        setNews(uniqueNews);
+        console.log('Fetched news successfully:', uniqueNews);
       } else {
         console.log('No news data available, triggering refresh');
         // If no news is available, trigger a refresh from the edge function
@@ -62,7 +64,7 @@ const HomeNewsSection = () => {
         description: "This may take a moment..."
       });
       
-      // Use Supabase function invoke
+      // Use Supabase function invoke instead of fetch
       const { data, error } = await supabase.functions.invoke('fetch-cyber-news', {
         method: 'POST',
         headers: {

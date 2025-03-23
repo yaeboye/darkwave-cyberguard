@@ -81,9 +81,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error, data } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          emailRedirectTo: window.location.origin,
-        }
       });
 
       if (error) {
@@ -96,6 +93,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "Account created",
         description: "Check your email to confirm your account.",
       });
+      
+      // Automatically sign in after signup for better UX
+      if (data.session) {
+        setSession(data.session);
+        setUser(data.session.user);
+        navigate('/');
+      }
     } catch (error: any) {
       console.error('Sign up error:', error);
       toast({

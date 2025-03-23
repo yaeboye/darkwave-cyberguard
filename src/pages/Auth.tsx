@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Shield, Lock, Mail, LogIn } from 'lucide-react';
@@ -16,6 +16,12 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const { user, signIn, signUp, loading } = useAuth();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Clear form when switching between login and signup
+    setEmail('');
+    setPassword('');
+  }, [isSignUp]);
 
   // Redirect if already logged in
   if (user && !loading) {
