@@ -62,24 +62,24 @@ const HomeNewsSection = () => {
         description: "This may take a moment..."
       });
       
-      const response = await fetch('/api/fetch-cyber-news', {
+      // Use Supabase function invoke instead of fetch
+      const { data, error } = await supabase.functions.invoke('fetch-cyber-news', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         }
       });
       
-      if (!response.ok) {
-        throw new Error('Failed to refresh news data');
+      if (error) {
+        throw new Error(error.message || 'Failed to refresh news data');
       }
       
-      const result = await response.json();
-      console.log('News refresh result:', result);
+      console.log('News refresh result:', data);
       
-      if (result.success) {
+      if (data.success) {
         toast({
           title: "News updated",
-          description: `Successfully loaded ${result.count} articles`
+          description: `Successfully loaded ${data.count} articles`
         });
         // Refetch news after a short delay to allow DB to update
         setTimeout(fetchNews, 1000);

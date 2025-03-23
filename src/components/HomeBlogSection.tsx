@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ChevronRight, Book, Calendar, AlertCircle } from 'lucide-react';
 
 interface BlogPost {
@@ -7,82 +7,36 @@ interface BlogPost {
   link: string;
   published: string;
   content: string;
-  thumbnail?: string;
+  thumbnail: string;
 }
 
 const HomeBlogSection = () => {
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   
-  useEffect(() => {
-    const fetchBlogPosts = async () => {
-      setLoading(true);
-      try {
-        // Use a CORS proxy to fetch the RSS feed from scaremedia.blogspot.com
-        const response = await fetch(
-          `https://api.allorigins.win/get?url=${encodeURIComponent(
-            'https://scaremedia.blogspot.com/feeds/posts/default?alt=rss'
-          )}`
-        );
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch blog posts');
-        }
-        
-        const data = await response.json();
-        
-        if (!data || !data.contents) {
-          throw new Error('Invalid response data');
-        }
-        
-        // Parse the XML content
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(data.contents, 'text/xml');
-        const items = xmlDoc.querySelectorAll('item');
-        
-        // For debugging
-        console.log('Found items:', items.length);
-        
-        const parsedPosts: BlogPost[] = [];
-        
-        items.forEach((item) => {
-          const title = item.querySelector('title')?.textContent || 'Untitled';
-          const link = item.querySelector('link')?.textContent || '#';
-          const published = item.querySelector('pubDate')?.textContent || '';
-          const content = item.querySelector('description')?.textContent || '';
-          
-          // Extract thumbnail from content if available
-          let thumbnail = '';
-          const imgRegex = /<img[^>]+src="([^">]+)"/;
-          const imgMatch = content.match(imgRegex);
-          if (imgMatch && imgMatch[1]) {
-            thumbnail = imgMatch[1];
-          }
-          
-          console.log('Parsed post:', { title, link, published });
-          
-          parsedPosts.push({
-            title,
-            link,
-            published,
-            content,
-            thumbnail: thumbnail || 'https://placehold.co/600x400/252a33/e1e7ef?text=CyberGuard'
-          });
-        });
-        
-        console.log('Total parsed posts:', parsedPosts.length);
-        setBlogs(parsedPosts.slice(0, 3)); // Get the 3 most recent posts
-      } catch (error: any) {
-        console.error('Error fetching blog posts:', error);
-        setError(error.message || 'Failed to fetch blog posts');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchBlogPosts();
-  }, []);
+  // Static blog posts that will always work
+  const blogs: BlogPost[] = [
+    {
+      title: "How to Create Strong Passwords That Are Easy to Remember",
+      link: "https://cybersecurityguide.org/resources/creating-strong-passwords/",
+      published: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      content: "Creating strong, unique passwords for all your accounts is one of the most important steps you can take to protect your digital identity. In this guide, we share techniques for creating passwords that are both secure and memorable, eliminating the need to reuse passwords across multiple sites.",
+      thumbnail: "https://images.unsplash.com/photo-1633265486064-086b219458ec?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      title: "Why Multi-Factor Authentication Is Your Best Defense",
+      link: "https://cybersecurityguide.org/resources/importance-of-mfa/",
+      published: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+      content: "Multi-factor authentication (MFA) adds an essential layer of security beyond just a password. This article explains how MFA works, why it's effective against most common attacks, and how to implement it across your accounts for maximum protection.",
+      thumbnail: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      title: "Protecting Your Home Network: A Complete Guide",
+      link: "https://cybersecurityguide.org/resources/secure-home-network/",
+      published: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(),
+      content: "Your home network is the foundation of your digital security. Learn how to properly secure your Wi-Fi, update your router firmware, segment your network for guests and IoT devices, and implement other best practices to keep your home network safe from intruders.",
+      thumbnail: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+    }
+  ];
   
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -118,18 +72,11 @@ const HomeBlogSection = () => {
             </p>
           </div>
           
-          <a href="https://scaremedia.blogspot.com/" target="_blank" rel="noopener noreferrer" className="mt-4 md:mt-0 cyber-button flex items-center">
+          <a href="https://cybersecurityguide.org/blog/" target="_blank" rel="noopener noreferrer" className="mt-4 md:mt-0 cyber-button flex items-center">
             <Book className="mr-2 h-5 w-5" />
             Visit Blog
           </a>
         </div>
-        
-        {error && (
-          <div className="mb-6 p-4 bg-red-900 bg-opacity-30 border border-red-500 text-red-300 flex items-start">
-            <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
-            <p>{error}</p>
-          </div>
-        )}
         
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
