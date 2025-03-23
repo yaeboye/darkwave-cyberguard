@@ -2,29 +2,70 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { Shield, Lock, Mail, User, LogIn } from 'lucide-react';
+import { Shield, Lock, Mail, LogIn } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import TerminalText from '@/components/TerminalText';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { user, signIn, signUp, loading } = useAuth();
+  const { toast } = useToast();
 
   // Redirect if already logged in
   if (user && !loading) {
     return <Navigate to="/" />;
   }
 
+  const validateForm = () => {
+    if (!email.trim()) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    if (!password.trim()) {
+      toast({
+        title: "Password required",
+        description: "Please enter your password",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    if (isSignUp && password.length < 6) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isSignUp) {
-      await signUp(email, password);
-    } else {
-      await signIn(email, password);
+    if (!validateForm()) return;
+    
+    try {
+      if (isSignUp) {
+        await signUp(email, password);
+      } else {
+        await signIn(email, password);
+      }
+    } catch (error) {
+      console.error("Authentication error:", error);
     }
   };
 
@@ -56,12 +97,12 @@ const Auth = () => {
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                  <input
+                  <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="cyber-input pl-10 w-full"
+                    className="pl-10 w-full bg-cyber-darkgray border-cyber-blue text-white"
                     placeholder="your@email.com"
                     required
                   />
@@ -74,21 +115,21 @@ const Auth = () => {
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                  <input
+                  <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="cyber-input pl-10 w-full"
+                    className="pl-10 w-full bg-cyber-darkgray border-cyber-blue text-white"
                     placeholder="••••••••"
                     required
                   />
                 </div>
               </div>
               
-              <button
+              <Button
                 type="submit"
-                className="cyber-button w-full flex items-center justify-center"
+                className="w-full bg-cyber-blue hover:bg-cyber-purple text-black font-bold"
                 disabled={loading}
               >
                 {loading ? (
@@ -99,13 +140,14 @@ const Auth = () => {
                     {isSignUp ? "Create Account" : "Sign In"}
                   </>
                 )}
-              </button>
+              </Button>
             </form>
             
             <div className="mt-6 text-center">
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-cyber-blue hover:text-cyber-purple transition-colors"
+                type="button"
               >
                 {isSignUp 
                   ? "Already have an account? Sign In" 

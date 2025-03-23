@@ -62,7 +62,7 @@ const HomeNewsSection = () => {
         description: "This may take a moment..."
       });
       
-      // Use Supabase function invoke instead of fetch
+      // Use Supabase function invoke
       const { data, error } = await supabase.functions.invoke('fetch-cyber-news', {
         method: 'POST',
         headers: {
@@ -98,8 +98,10 @@ const HomeNewsSection = () => {
   };
   
   useEffect(() => {
+    // Only fetch news once on component mount
     fetchNews();
     
+    // Set up Supabase realtime subscription
     const channel = supabase
       .channel('public:news_articles')
       .on('postgres_changes', 
@@ -111,6 +113,7 @@ const HomeNewsSection = () => {
       )
       .subscribe();
     
+    // Clean up subscription when component unmounts
     return () => {
       supabase.removeChannel(channel);
     };

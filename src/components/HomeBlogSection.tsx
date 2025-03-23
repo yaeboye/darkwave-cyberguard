@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
-import { ChevronRight, Book, Calendar, AlertCircle } from 'lucide-react';
+import React from 'react';
+import { ChevronRight, Book, Calendar } from 'lucide-react';
 
 interface BlogPost {
+  id: string;
   title: string;
   link: string;
   published: string;
@@ -11,11 +12,10 @@ interface BlogPost {
 }
 
 const HomeBlogSection = () => {
-  const [loading, setLoading] = useState(false);
-  
   // Static blog posts that will always work
   const blogs: BlogPost[] = [
     {
+      id: "1",
       title: "How to Create Strong Passwords That Are Easy to Remember",
       link: "https://cybersecurityguide.org/resources/creating-strong-passwords/",
       published: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
@@ -23,6 +23,7 @@ const HomeBlogSection = () => {
       thumbnail: "https://images.unsplash.com/photo-1633265486064-086b219458ec?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
     },
     {
+      id: "2",
       title: "Why Multi-Factor Authentication Is Your Best Defense",
       link: "https://cybersecurityguide.org/resources/importance-of-mfa/",
       published: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
@@ -30,6 +31,7 @@ const HomeBlogSection = () => {
       thumbnail: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
     },
     {
+      id: "3",
       title: "Protecting Your Home Network: A Complete Guide",
       link: "https://cybersecurityguide.org/resources/secure-home-network/",
       published: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(),
@@ -78,75 +80,52 @@ const HomeBlogSection = () => {
           </a>
         </div>
         
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="cyber-card animate-pulse h-96">
-                <div className="h-48 mb-4 bg-gray-800"></div>
-                <div className="h-6 bg-gray-800 mb-3 w-3/4"></div>
-                <div className="h-4 bg-gray-800 mb-2 w-full"></div>
-                <div className="h-4 bg-gray-800 mb-2 w-full"></div>
-                <div className="h-4 bg-gray-800 mb-4 w-2/3"></div>
-                <div className="h-3 bg-gray-800 w-1/4"></div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {blogs.length > 0 ? (
-              blogs.map((post, index) => (
-                <div key={index} className="cyber-card group h-full hover:shadow-neon-pink transition-all duration-300 flex flex-col">
-                  <div className="relative h-48 mb-4 overflow-hidden border border-cyber-pink">
-                    <img 
-                      src={post.thumbnail} 
-                      alt={post.title} 
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/placeholder.svg';
-                      }}
-                    />
-                    <div className="absolute top-0 right-0 bg-cyber-pink px-2 py-1">
-                      <span className="text-xs font-cyber text-black">Blog</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex-grow">
-                    <h3 className="font-cyber text-xl text-white mb-3 group-hover:text-cyber-pink transition-colors">
-                      {post.title}
-                    </h3>
-                    
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                      {extractSummary(post.content)}
-                    </p>
-                  </div>
-                  
-                  <div className="flex justify-between items-center text-xs text-gray-500 mt-4">
-                    <div className="flex items-center">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      <span>{formatDate(post.published)}</span>
-                    </div>
-                    
-                    <a 
-                      href={post.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="flex items-center text-cyber-pink"
-                    >
-                      <span>Read More</span>
-                      <ChevronRight className="h-3 w-3 ml-1" />
-                    </a>
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {blogs.map((post) => (
+            <div key={post.id} className="cyber-card group h-full hover:shadow-neon-pink transition-all duration-300 flex flex-col">
+              <div className="relative h-48 mb-4 overflow-hidden border border-cyber-pink">
+                <img 
+                  src={post.thumbnail} 
+                  alt={post.title} 
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/placeholder.svg';
+                  }}
+                />
+                <div className="absolute top-0 right-0 bg-cyber-pink px-2 py-1">
+                  <span className="text-xs font-cyber text-black">Blog</span>
                 </div>
-              ))
-            ) : (
-              <div className="col-span-3 text-center py-12">
-                <Book className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-xl font-cyber text-gray-400">No blog posts found</h3>
-                <p className="text-gray-500">Check back later for updates</p>
               </div>
-            )}
-          </div>
-        )}
+              
+              <div className="flex-grow">
+                <h3 className="font-cyber text-xl text-white mb-3 group-hover:text-cyber-pink transition-colors">
+                  {post.title}
+                </h3>
+                
+                <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                  {extractSummary(post.content)}
+                </p>
+              </div>
+              
+              <div className="flex justify-between items-center text-xs text-gray-500 mt-4">
+                <div className="flex items-center">
+                  <Calendar className="h-3 w-3 mr-1" />
+                  <span>{formatDate(post.published)}</span>
+                </div>
+                
+                <a 
+                  href={post.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center text-cyber-pink"
+                >
+                  <span>Read More</span>
+                  <ChevronRight className="h-3 w-3 ml-1" />
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
