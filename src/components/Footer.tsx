@@ -42,7 +42,7 @@ const Footer: React.FC = () => {
               <li><Link to="/" className="text-gray-400 hover:text-cyber-blue transition-colors">Home</Link></li>
               <li><Link to="/tools" className="text-gray-400 hover:text-cyber-blue transition-colors">Tools</Link></li>
               <li><Link to="/news" className="text-gray-400 hover:text-cyber-blue transition-colors">News</Link></li>
-              <li><Link to="/login" className="text-gray-400 hover:text-cyber-blue transition-colors">Login</Link></li>
+              <li><Link to="/auth" className="text-gray-400 hover:text-cyber-blue transition-colors">Login</Link></li>
             </ul>
           </div>
           
@@ -51,17 +51,16 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li><Link to="/tools/password-checker" className="text-gray-400 hover:text-cyber-blue transition-colors">Password Checker</Link></li>
               <li><Link to="/tools/password-generator" className="text-gray-400 hover:text-cyber-blue transition-colors">Password Generator</Link></li>
-              <li><Link to="/tools/hash-generator" className="text-gray-400 hover:text-cyber-blue transition-colors">Hash Generator</Link></li>
-              <li><Link to="/tools/encryption" className="text-gray-400 hover:text-cyber-blue transition-colors">Encryption Tools</Link></li>
+              <li><Link to="/tools/password-manager" className="text-gray-400 hover:text-cyber-blue transition-colors">Password Manager</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-cyber text-white font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><Link to="/privacy" className="text-gray-400 hover:text-cyber-blue transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="text-gray-400 hover:text-cyber-blue transition-colors">Terms of Service</Link></li>
-              <li><Link to="/contact" className="text-gray-400 hover:text-cyber-blue transition-colors">Contact Us</Link></li>
+              <li><Link to="/not-found" className="text-gray-400 hover:text-cyber-blue transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/not-found" className="text-gray-400 hover:text-cyber-blue transition-colors">Terms of Service</Link></li>
+              <li><Link to="/feedback" className="text-gray-400 hover:text-cyber-blue transition-colors">Contact Us</Link></li>
             </ul>
           </div>
         </div>

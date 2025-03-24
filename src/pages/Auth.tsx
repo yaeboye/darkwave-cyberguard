@@ -49,13 +49,28 @@ const Auth = () => {
 
   const onSubmit = async (values: FormValues) => {
     try {
+      console.log("Form submitted:", isSignUp ? "SignUp" : "SignIn", values);
+      
       if (isSignUp) {
         await signUp(values.email, values.password);
+        toast({
+          title: "Account creation initiated",
+          description: "Please check your email to confirm your account.",
+        });
       } else {
         await signIn(values.email, values.password);
+        toast({
+          title: "Login successful",
+          description: "Welcome back!",
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Authentication error:", error);
+      toast({
+        title: isSignUp ? "Sign up failed" : "Sign in failed",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive",
+      });
     }
   };
 

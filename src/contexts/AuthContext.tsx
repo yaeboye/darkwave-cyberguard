@@ -45,8 +45,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log("Attempting sign in with:", email);
       setLoading(true);
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -55,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
 
+      console.log("Sign in successful:", data);
       toast({
         title: "Welcome back!",
         description: "You've successfully signed in.",
@@ -68,6 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: error.message,
         variant: "destructive",
       });
+      throw error; // Re-throw to allow the component to handle it
     } finally {
       setLoading(false);
     }
@@ -75,8 +78,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string) => {
     try {
+      console.log("Attempting sign up with:", email);
       setLoading(true);
-      const { error } = await supabase.auth.signUp({
+      const { error, data } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -88,14 +92,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
       
+      console.log("Sign up response:", data);
       toast({
         title: "Account created",
         description: "Check your email to confirm your account.",
       });
       
-      // Do not automatically sign in after signup - let email confirmation happen
-      // Just redirect to login page
-      navigate('/auth');
+      // Don't automatically navigate after signup - let email confirmation happen
+      // Just stay on the auth page
     } catch (error: any) {
       console.error('Sign up error:', error);
       toast({
@@ -103,6 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: error.message,
         variant: "destructive",
       });
+      throw error; // Re-throw to allow the component to handle it
     } finally {
       setLoading(false);
     }
