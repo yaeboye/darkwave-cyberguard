@@ -9,66 +9,50 @@ import TerminalText from '@/components/TerminalText';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+
+const formSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const { user, signIn, signUp, loading } = useAuth();
   const { toast } = useToast();
-
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: ''
+    }
+  });
+  
   useEffect(() => {
-    // Clear form when switching between login and signup
-    setEmail('');
-    setPassword('');
-  }, [isSignUp]);
+    // Reset form when switching between login and signup
+    form.reset({
+      email: '',
+      password: ''
+    });
+  }, [isSignUp, form]);
 
   // Redirect if already logged in
   if (user && !loading) {
     return <Navigate to="/" />;
   }
 
-  const validateForm = () => {
-    if (!email.trim()) {
-      toast({
-        title: "Email required",
-        description: "Please enter your email address",
-        variant: "destructive",
-      });
-      return false;
-    }
-    
-    if (!password.trim()) {
-      toast({
-        title: "Password required",
-        description: "Please enter your password",
-        variant: "destructive",
-      });
-      return false;
-    }
-    
-    if (isSignUp && password.length < 6) {
-      toast({
-        title: "Password too short",
-        description: "Password must be at least 6 characters long",
-        variant: "destructive",
-      });
-      return false;
-    }
-    
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
+  const onSubmit = async (values: FormValues) => {
     try {
       if (isSignUp) {
-        await signUp(email, password);
+        await signUp(values.email, values.password);
       } else {
-        await signIn(email, password);
+        await signIn(values.email, values.password);
       }
     } catch (error) {
       console.error("Authentication error:", error);
@@ -96,58 +80,68 @@ const Auth = () => {
           </div>
           
           <div className="cyber-card">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="email" className="block text-gray-400 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 w-full bg-cyber-darkgray border-cyber-blue text-white"
-                    placeholder="your@email.com"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-gray-400 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 w-full bg-cyber-darkgray border-cyber-blue text-white"
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <Button
-                type="submit"
-                className="w-full bg-cyber-blue hover:bg-cyber-purple text-black font-bold"
-                disabled={loading}
-              >
-                {loading ? (
-                  <span className="animate-pulse">Processing...</span>
-                ) : (
-                  <>
-                    <LogIn className="mr-2 h-5 w-5" />
-                    {isSignUp ? "Create Account" : "Sign In"}
-                  </>
-                )}
-              </Button>
-            </form>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-gray-400 mb-2">Email Address</FormLabel>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="email"
+                            className="pl-10 w-full bg-cyber-darkgray border-cyber-blue text-white"
+                            placeholder="your@email.com"
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="text-red-500 mt-1 text-sm" />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-gray-400 mb-2">Password</FormLabel>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="password"
+                            className="pl-10 w-full bg-cyber-darkgray border-cyber-blue text-white"
+                            placeholder="••••••••"
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="text-red-500 mt-1 text-sm" />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button
+                  type="submit"
+                  className="w-full bg-cyber-blue hover:bg-cyber-purple text-black font-bold"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <span className="animate-pulse">Processing...</span>
+                  ) : (
+                    <>
+                      <LogIn className="mr-2 h-5 w-5" />
+                      {isSignUp ? "Create Account" : "Sign In"}
+                    </>
+                  )}
+                </Button>
+              </form>
+            </Form>
             
             <div className="mt-6 text-center">
               <button
