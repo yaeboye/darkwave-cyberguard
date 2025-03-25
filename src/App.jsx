@@ -7,16 +7,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Pages
-import Index from "./pages/Index";
-import Tools from "./pages/Tools";
-import News from "./pages/News";
-import NotFound from "./pages/NotFound";
-import Feedback from "./pages/Feedback";
+import Index from "./pages/Index.jsx";
+import Tools from "./pages/Tools.jsx";
+import News from "./pages/News.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import Feedback from "./pages/Feedback.jsx";
 
 // Tool Pages
-import PasswordChecker from "./pages/tools/PasswordChecker";
-import PasswordGenerator from "./pages/tools/PasswordGenerator";
-import PasswordManager from "./pages/tools/PasswordManager";
+import PasswordChecker from "./pages/tools/PasswordChecker.jsx";
+import PasswordGenerator from "./pages/tools/PasswordGenerator.jsx";
+import PasswordManager from "./pages/tools/PasswordManager.jsx";
 
 // Create a new query client for React Query
 const queryClient = new QueryClient({
