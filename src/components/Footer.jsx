@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Twitter, Github, Linkedin, Mail } from 'lucide-react';
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
     <footer className="bg-cyber-darkgray border-t border-cyber-blue mt-12">
       <div className="container mx-auto px-4 py-12">
