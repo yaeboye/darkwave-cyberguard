@@ -8,15 +8,15 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // Pages
 import Index from "./pages/Index.jsx";
-import Tools from "./pages/Tools.jsx";
-import News from "./pages/News.jsx";
-import NotFound from "./pages/NotFound.jsx";
-import Feedback from "./pages/Feedback.jsx";
+import Tools from "./pages/Tools.tsx";
+import News from "./pages/News.tsx";
+import NotFound from "./pages/NotFound.tsx";
+import Feedback from "./pages/Feedback.tsx";
 
 // Tool Pages
-import PasswordChecker from "./pages/tools/PasswordChecker.jsx";
-import PasswordGenerator from "./pages/tools/PasswordGenerator.jsx";
-import PasswordManager from "./pages/tools/PasswordManager.jsx";
+import PasswordChecker from "./pages/tools/PasswordChecker.tsx";
+import PasswordGenerator from "./pages/tools/PasswordGenerator.tsx";
+import PasswordManager from "./pages/tools/PasswordManager.tsx";
 
 // Create a new query client for React Query
 const queryClient = new QueryClient({
