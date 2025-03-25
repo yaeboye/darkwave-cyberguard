@@ -1,12 +1,10 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Shield, Monitor, Cpu, Terminal, FileText, Wrench, LogIn, LogOut, User, MessageSquare } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { Menu, X, Shield, Monitor, Cpu, Terminal, FileText, Wrench, MessageSquare } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, signOut } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -39,27 +37,6 @@ const Navbar: React.FC = () => {
               <MessageSquare className="mr-1 h-4 w-4" />
               <span>Feedback</span>
             </Link>
-            
-            {user ? (
-              <div className="flex items-center space-x-4">
-                <Link to="/tools/password-manager" className="font-cyber text-cyber-purple hover:text-cyber-blue transition-colors flex items-center">
-                  <User className="mr-1 h-4 w-4" />
-                  <span>My Vault</span>
-                </Link>
-                <button 
-                  onClick={() => signOut()} 
-                  className="cyber-button flex items-center"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Logout</span>
-                </button>
-              </div>
-            ) : (
-              <Link to="/auth" className="cyber-button flex items-center">
-                <LogIn className="mr-2 h-4 w-4" />
-                <span>Login</span>
-              </Link>
-            )}
           </div>
 
           {/* Mobile menu button */}
@@ -110,38 +87,6 @@ const Navbar: React.FC = () => {
               <MessageSquare className="mr-2 h-4 w-4" />
               <span>Feedback</span>
             </Link>
-            
-            {user ? (
-              <>
-                <Link 
-                  to="/tools/password-manager" 
-                  className="block font-cyber py-2 px-4 text-cyber-purple hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
-                  onClick={toggleMenu}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  <span>My Vault</span>
-                </Link>
-                <button 
-                  onClick={() => {
-                    signOut();
-                    toggleMenu();
-                  }} 
-                  className="w-full text-left block font-cyber py-2 px-4 text-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Logout</span>
-                </button>
-              </>
-            ) : (
-              <Link 
-                to="/auth" 
-                className="block font-cyber py-2 px-4 text-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
-                onClick={toggleMenu}
-              >
-                <LogIn className="mr-2 h-4 w-4" />
-                <span>Login</span>
-              </Link>
-            )}
           </div>
         </div>
       )}
