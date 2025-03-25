@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import CyberHeader from '../components/CyberHeader';
 import Navbar from '../components/Navbar';
@@ -16,6 +17,7 @@ interface NewsArticle {
   image_url: string;
   author?: string;
   content: string;
+  url?: string;
 }
 
 const News = () => {
@@ -72,12 +74,60 @@ const News = () => {
         throw error;
       }
       
-      if (data) {
-        setNews(data as NewsArticle[]);
+      if (data && data.length > 0) {
+        // Remove any duplicates by title (in case multiple fetch operations occurred)
+        const uniqueArticles = Array.from(
+          new Map(data.map(item => [item.title, item])).values()
+        );
+        setNews(uniqueArticles as NewsArticle[]);
+      } else {
+        await triggerNewsRefresh();
       }
     } catch (error: any) {
       console.error('Error fetching news:', error);
       setError(error.message || 'Failed to fetch news articles');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const triggerNewsRefresh = async () => {
+    try {
+      setLoading(true);
+      toast({
+        title: "Fetching latest cybersecurity news",
+        description: "This may take a moment..."
+      });
+      
+      const { data, error } = await supabase.functions.invoke('fetch-real-news', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (error) {
+        throw new Error(error.message || 'Failed to refresh news data');
+      }
+      
+      console.log('News refresh result:', data);
+      
+      if (data.success) {
+        toast({
+          title: "News updated",
+          description: `Successfully loaded ${data.count} articles`
+        });
+        // Refetch news after a short delay to allow DB to update
+        setTimeout(fetchNews, 1000);
+      }
+    } catch (error: any) {
+      console.error('Error refreshing news:', error);
+      setError(error.message || 'Failed to refresh news data');
+      toast({
+        title: "Error refreshing news",
+        description: error.message || "Please try again later",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -98,7 +148,7 @@ const News = () => {
   
   const getReadTime = (content: string) => {
     const wordsPerMinute = 200;
-    const wordCount = content.split(/\s+/).length;
+    const wordCount = content?.split(/\s+/).length || 0;
     const readTime = Math.ceil(wordCount / wordsPerMinute);
     return `${readTime} min`;
   };
@@ -117,7 +167,7 @@ const News = () => {
           
           <div className="flex justify-end mb-4">
             <button 
-              onClick={fetchNews} 
+              onClick={triggerNewsRefresh} 
               className="flex items-center px-3 py-2 text-sm bg-cyber-darkgray text-white hover:bg-cyber-blue hover:text-black transition-colors"
               disabled={loading}
             >
@@ -179,6 +229,9 @@ const News = () => {
                       src={article.image_url} 
                       alt={article.title} 
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/placeholder.svg';
+                      }}
                     />
                     <div className="absolute top-0 right-0 bg-cyber-blue px-2 py-1">
                       <span className="text-xs font-cyber text-black">{article.category}</span>
@@ -205,10 +258,22 @@ const News = () => {
                         <span>{getReadTime(article.content)} read</span>
                       </div>
                       
-                      <div className="flex items-center text-cyber-blue">
-                        <span>Read</span>
-                        <ExternalLink className="h-3 w-3 ml-1" />
-                      </div>
+                      {article.url ? (
+                        <a 
+                          href={article.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="flex items-center text-cyber-blue hover:text-white transition-colors"
+                        >
+                          <span>Read</span>
+                          <ExternalLink className="h-3 w-3 ml-1" />
+                        </a>
+                      ) : (
+                        <div className="flex items-center text-cyber-blue">
+                          <span>Read</span>
+                          <ExternalLink className="h-3 w-3 ml-1" />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

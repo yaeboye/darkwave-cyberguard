@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Newspaper, Calendar, AlertCircle, RefreshCw } from 'lucide-react';
+import { ChevronRight, Newspaper, Calendar, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -12,6 +12,7 @@ interface NewsArticle {
   published_at: string;
   category: string;
   image_url: string | null;
+  url: string | null;
 }
 
 const HomeNewsSection = () => {
@@ -25,7 +26,7 @@ const HomeNewsSection = () => {
     try {
       const { data, error } = await supabase
         .from('news_articles')
-        .select('id, title, summary, published_at, category, image_url')
+        .select('id, title, summary, published_at, category, image_url, url')
         .order('published_at', { ascending: false })
         .limit(3);
       
@@ -64,8 +65,8 @@ const HomeNewsSection = () => {
         description: "This may take a moment..."
       });
       
-      // Use Supabase function invoke instead of fetch
-      const { data, error } = await supabase.functions.invoke('fetch-cyber-news', {
+      // Use the new fetch-real-news function
+      const { data, error } = await supabase.functions.invoke('fetch-real-news', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -218,10 +219,22 @@ const HomeNewsSection = () => {
                       <span>{formatDate(article.published_at)}</span>
                     </div>
                     
-                    <div className="flex items-center text-cyber-blue">
-                      <span>Read More</span>
-                      <ChevronRight className="h-3 w-3 ml-1" />
-                    </div>
+                    {article.url ? (
+                      <a 
+                        href={article.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="flex items-center text-cyber-blue"
+                      >
+                        <span>Read More</span>
+                        <ExternalLink className="h-3 w-3 ml-1" />
+                      </a>
+                    ) : (
+                      <div className="flex items-center text-cyber-blue">
+                        <span>Read More</span>
+                        <ChevronRight className="h-3 w-3 ml-1" />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
