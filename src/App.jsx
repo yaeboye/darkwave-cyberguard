@@ -13,6 +13,9 @@ import Tools from "./pages/Tools.tsx";
 import News from "./pages/News.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Feedback from "./pages/Feedback.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
+import TermsOfService from "./pages/TermsOfService.tsx";
+import Contact from "./pages/Contact.tsx";
 
 // Tool Pages
 import PasswordChecker from "./pages/tools/PasswordChecker.tsx";
@@ -43,6 +46,11 @@ const App = () => (
               <Route path="/tools" element={<Tools />} />
               <Route path="/news" element={<News />} />
               <Route path="/feedback" element={<Feedback />} />
+              
+              {/* Legal Pages */}
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/contact" element={<Contact />} />
               
               {/* Tool Routes */}
               <Route path="/tools/password-checker" element={<PasswordChecker />} />
