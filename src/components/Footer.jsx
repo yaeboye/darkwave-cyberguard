@@ -58,7 +58,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} CyberGuard. All rights reserved.
+            &copy; {new Date().getFullYear()} CyberGuard by Satvik Jindal. All rights reserved.
           </p>
         </div>
       </div>

@@ -33,7 +33,7 @@ const Contact = () => {
     
     toast({
       title: "Message Sent",
-      description: "We'll get back to you as soon as possible!",
+      description: "Thank you for contacting me! I'll get back to you soon.",
     });
     
     setName('');
@@ -57,11 +57,16 @@ const Contact = () => {
           </div>
           
           <CyberHeader 
-            title="Contact Us" 
-            subtitle="Have questions or feedback? We're here to help."
+            title="Contact Me" 
+            subtitle="Have questions or want to work together? Let's talk."
           />
           
           <div className="cyber-card">
+            <div className="mb-6 text-center">
+              <h3 className="text-xl text-cyber-blue font-cyber mb-2">Satvik Jindal</h3>
+              <p className="text-gray-400">Cybersecurity enthusiast & developer</p>
+            </div>
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-gray-400 mb-2">
@@ -112,7 +117,7 @@ const Contact = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="cyber-input min-h-[200px]"
-                  placeholder="How can we help you?"
+                  placeholder="How can I help you?"
                   required
                 />
               </div>
