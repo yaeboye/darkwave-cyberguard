@@ -23,6 +23,7 @@ const HomeNewsSection = () => {
   
   const fetchNews = async () => {
     setLoading(true);
+    setError(null);
     try {
       const { data, error } = await supabase
         .from('news_articles')
@@ -35,9 +36,8 @@ const HomeNewsSection = () => {
       }
       
       if (data && data.length > 0) {
-        const uniqueNews = Array.from(new Map(data.map(item => [item.id, item])).values());
-        setNews(uniqueNews);
-        console.log('Fetched news successfully:', uniqueNews);
+        setNews(data);
+        console.log('Fetched news successfully:', data);
       } else {
         console.log('No news data available, triggering refresh');
         await triggerNewsRefresh();

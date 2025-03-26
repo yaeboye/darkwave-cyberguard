@@ -47,22 +47,40 @@ Deno.serve(async (req) => {
     
     // Transform News API data to match our schema
     const newsArticles = newsData.articles.map((article: any) => ({
-      title: article.title,
-      summary: article.description,
-      content: article.content,
-      source: article.source.name,
-      author: article.author,
-      category: detectCategory(article.title, article.description),
-      image_url: article.urlToImage,
-      published_at: article.publishedAt,
-      url: article.url
+      title: article.title || 'Untitled Article',
+      summary: article.description || 'No description available',
+      content: article.content || article.description || 'No content available',
+      source: article.source?.name || 'Unknown Source',
+      author: article.author || 'Unknown Author',
+      category: detectCategory(article.title || '', article.description || ''),
+      image_url: article.urlToImage || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5',
+      published_at: article.publishedAt || new Date().toISOString(),
+      url: article.url || null
     }))
     
+    // Make sure all required fields have values to avoid null constraint violations
+    const validArticles = newsArticles.filter(article => 
+      article.title && 
+      article.summary && 
+      article.published_at
+    )
+    
+    if (validArticles.length === 0) {
+      throw new Error('No valid articles found after filtering')
+    }
+    
+    console.log(`Found ${validArticles.length} valid articles to insert`)
+    
     // Clear existing articles to avoid duplicates
-    await supabase.from('news_articles').delete().gte('id', '0')
+    const { error: deleteError } = await supabase.from('news_articles').delete().gte('id', '0')
+    
+    if (deleteError) {
+      console.error('Error deleting existing articles:', deleteError)
+      throw deleteError
+    }
     
     // Insert the articles
-    const { error } = await supabase.from('news_articles').insert(newsArticles)
+    const { error } = await supabase.from('news_articles').insert(validArticles)
     
     if (error) {
       console.error('Error inserting articles:', error)
@@ -72,7 +90,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        count: newsArticles.length,
+        count: validArticles.length,
         message: "Successfully fetched and stored real cybersecurity news"
       }),
       {
