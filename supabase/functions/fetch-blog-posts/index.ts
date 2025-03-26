@@ -12,11 +12,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const NEWS_API_KEY = Deno.env.get('NEWS_API_KEY')
-    if (!NEWS_API_KEY) {
-      throw new Error('NEWS_API_KEY environment variable not set')
-    }
-
+    // Use the provided News API key
+    const NEWS_API_KEY = 'a0d97574f94c49b1b9d6fccf82a6b824'
+    
     // Fetch blogs about cybersecurity best practices
     console.log("Fetching cybersecurity blog posts...")
     
