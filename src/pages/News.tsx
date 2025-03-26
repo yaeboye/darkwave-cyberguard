@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import CyberHeader from '../components/CyberHeader';
 import Navbar from '../components/Navbar';
@@ -75,7 +74,6 @@ const News = () => {
       }
       
       if (data && data.length > 0) {
-        // Remove any duplicates by title (in case multiple fetch operations occurred)
         const uniqueArticles = Array.from(
           new Map(data.map(item => [item.title, item])).values()
         );
@@ -117,7 +115,6 @@ const News = () => {
           title: "News updated",
           description: `Successfully loaded ${data.count} articles`
         });
-        // Refetch news after a short delay to allow DB to update
         setTimeout(fetchNews, 1000);
       }
     } catch (error: any) {

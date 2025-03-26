@@ -104,6 +104,7 @@ export type Database = {
           summary: string
           title: string
           updated_at: string
+          url: string | null
         }
         Insert: {
           author?: string | null
@@ -117,6 +118,7 @@ export type Database = {
           summary: string
           title: string
           updated_at?: string
+          url?: string | null
         }
         Update: {
           author?: string | null
@@ -130,6 +132,7 @@ export type Database = {
           summary?: string
           title?: string
           updated_at?: string
+          url?: string | null
         }
         Relationships: []
       }

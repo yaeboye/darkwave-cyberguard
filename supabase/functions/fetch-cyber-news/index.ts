@@ -33,6 +33,7 @@ Deno.serve(async (req) => {
         category: "Ransomware",
         image_url: "https://images.unsplash.com/photo-1632161099575-33c88435b1a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
         published_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        url: "https://example.com/ransomware-healthcare"
       },
       {
         title: "Critical Vulnerability Discovered in Popular Web Framework",
@@ -43,6 +44,7 @@ Deno.serve(async (req) => {
         category: "Vulnerability",
         image_url: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
         published_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+        url: "https://example.com/laravel-vulnerability"
       },
       {
         title: "Sophisticated Phishing Campaign Targets Financial Institutions",
@@ -53,6 +55,7 @@ Deno.serve(async (req) => {
         category: "Phishing",
         image_url: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
         published_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        url: "https://example.com/phishing-campaign"
       }
     ];
     

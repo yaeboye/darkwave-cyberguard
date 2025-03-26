@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Newspaper, Calendar, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
@@ -194,7 +193,6 @@ const HomeNewsSection = () => {
                       alt={article.title} 
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       onError={(e) => {
-                        // Fallback for image load errors
                         (e.target as HTMLImageElement).src = '/placeholder.svg';
                       }}
                     />
