@@ -34,13 +34,11 @@ const HomeNewsSection = () => {
       }
       
       if (data && data.length > 0) {
-        // Remove any duplicates by id
         const uniqueNews = Array.from(new Map(data.map(item => [item.id, item])).values());
         setNews(uniqueNews);
         console.log('Fetched news successfully:', uniqueNews);
       } else {
         console.log('No news data available, triggering refresh');
-        // If no news is available, trigger a refresh from the edge function
         await triggerNewsRefresh();
       }
     } catch (error: any) {
@@ -64,7 +62,6 @@ const HomeNewsSection = () => {
         description: "This may take a moment..."
       });
       
-      // Use the new fetch-real-news function
       const { data, error } = await supabase.functions.invoke('fetch-real-news', {
         method: 'POST',
         headers: {
@@ -83,7 +80,6 @@ const HomeNewsSection = () => {
           title: "News updated",
           description: `Successfully loaded ${data.count} articles`
         });
-        // Refetch news after a short delay to allow DB to update
         setTimeout(fetchNews, 1000);
       }
     } catch (error: any) {
@@ -100,10 +96,8 @@ const HomeNewsSection = () => {
   };
   
   useEffect(() => {
-    // Only fetch news once on component mount
     fetchNews();
     
-    // Set up Supabase realtime subscription
     const channel = supabase
       .channel('public:news_articles')
       .on('postgres_changes', 
@@ -115,7 +109,6 @@ const HomeNewsSection = () => {
       )
       .subscribe();
     
-    // Clean up subscription when component unmounts
     return () => {
       supabase.removeChannel(channel);
     };

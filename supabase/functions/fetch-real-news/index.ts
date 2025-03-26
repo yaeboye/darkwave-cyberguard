@@ -12,11 +12,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const NEWS_API_KEY = Deno.env.get('NEWS_API_KEY')
-    if (!NEWS_API_KEY) {
-      throw new Error('NEWS_API_KEY environment variable not set')
-    }
-
+    // Use the provided News API key
+    const NEWS_API_KEY = 'a0d97574f94c49b1b9d6fccf82a6b824'
+    
     // Setup Supabase client to store the fetched news
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
     const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')
