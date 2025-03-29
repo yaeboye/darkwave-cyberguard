@@ -11,38 +11,13 @@ import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import TrendingThreats from '../components/TrendingThreats';
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const { toast } = useToast();
   const [showTerminalText, setShowTerminalText] = useState(false);
-  const [blogPosts, setBlogPosts] = useState([
-    {
-      id: 1,
-      title: "The Rise of Ransomware as a Service",
-      summary: "Cybercriminals are now offering ransomware as a subscription model, lowering the barrier to entry for would-be attackers.",
-      category: "Threat Intel",
-      date: "June 5, 2023",
-      source: "Krebs on Security",
-      link: "https://krebsonsecurity.com/2023/06/ransomware-as-a-service-the-pandemic-within-a-pandemic/"
-    },
-    {
-      id: 2,
-      title: "Zero-Day Vulnerability Found in Popular VPN Service",
-      summary: "Security researchers discovered a critical vulnerability that allows remote code execution without authentication.",
-      category: "Vulnerabilities",
-      date: "July 12, 2023",
-      source: "The Hacker News",
-      link: "https://thehackernews.com/2023/07/zero-day-vulnerability-in-vpn-services.html"
-    },
-    {
-      id: 3,
-      title: "Why Multi-Factor Authentication Is Not Enough",
-      summary: "Recent bypass techniques show that MFA needs to be implemented carefully to remain effective.",
-      category: "Authentication",
-      date: "August 23, 2023",
-      source: "Dark Reading",
-      link: "https://www.darkreading.com/authentication/multi-factor-authentication-effectiveness"
-    }
-  ]);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [blogLoading, setBlogLoading] = useState(true);
 
   const tools = [
     {
@@ -95,13 +70,111 @@ const Index = () => {
     }
   ];
 
+  // Fetch real cybersecurity news from API
+  const fetchCybersecurityNews = async () => {
+    setBlogLoading(true);
+    try {
+      // Using Gnews API for cybersecurity news
+      // For demo purposes - in production, use your own API key
+      const response = await fetch(
+        'https://gnews.io/api/v4/search?q=cybersecurity&token=9cf3654c4fdea3c02b7025cb25c95b8f&lang=en&max=3'
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch news');
+      }
+      
+      const data = await response.json();
+      
+      if (data.articles) {
+        const formattedArticles = data.articles.map((article, index) => ({
+          id: index + 1,
+          title: article.title,
+          summary: article.description,
+          category: 'Cybersecurity',
+          date: new Date(article.publishedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }),
+          source: article.source.name,
+          link: article.url
+        }));
+        
+        setBlogPosts(formattedArticles);
+      }
+    } catch (error) {
+      console.error('Error fetching cybersecurity news:', error);
+      toast({
+        title: "Failed to load news",
+        description: "Using fallback data instead",
+        variant: "destructive",
+      });
+      
+      // Fallback to static data if API fails
+      setBlogPosts([
+        {
+          id: 1,
+          title: "The Rise of Ransomware as a Service",
+          summary: "Cybercriminals are now offering ransomware as a subscription model, lowering the barrier to entry for would-be attackers.",
+          category: "Threat Intel",
+          date: "June 5, 2023",
+          source: "Krebs on Security",
+          link: "https://krebsonsecurity.com/2023/06/ransomware-as-a-service-the-pandemic-within-a-pandemic/"
+        },
+        {
+          id: 2,
+          title: "Zero-Day Vulnerability Found in Popular VPN Service",
+          summary: "Security researchers discovered a critical vulnerability that allows remote code execution without authentication.",
+          category: "Vulnerabilities",
+          date: "July 12, 2023",
+          source: "The Hacker News",
+          link: "https://thehackernews.com/2023/07/zero-day-vulnerability-in-vpn-services.html"
+        },
+        {
+          id: 3,
+          title: "Why Multi-Factor Authentication Is Not Enough",
+          summary: "Recent bypass techniques show that MFA needs to be implemented carefully to remain effective.",
+          category: "Authentication",
+          date: "August 23, 2023",
+          source: "Dark Reading",
+          link: "https://www.darkreading.com/authentication/multi-factor-authentication-effectiveness"
+        }
+      ]);
+    } finally {
+      setBlogLoading(false);
+    }
+  };
+
+  // Fetch news on component mount and set an interval for refreshing
   useEffect(() => {
-    const timer = setTimeout(() => {
+    fetchCybersecurityNews();
+    
+    // Refresh news every 30 minutes (1800000 ms)
+    const newsRefreshInterval = setInterval(() => {
+      fetchCybersecurityNews();
+    }, 1800000);
+    
+    // Terminal text effect timer
+    const terminalTimer = setTimeout(() => {
       setShowTerminalText(true);
     }, 500);
-
-    return () => clearTimeout(timer);
+    
+    // Clean up intervals and timers
+    return () => {
+      clearInterval(newsRefreshInterval);
+      clearTimeout(terminalTimer);
+    };
   }, []);
+
+  // Function to manually refresh blogs
+  const handleRefreshBlogs = () => {
+    fetchCybersecurityNews();
+    toast({
+      title: "Refreshing news",
+      description: "Getting the latest cybersecurity updates"
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -239,47 +312,59 @@ const Index = () => {
         {/* Blog Posts Section */}
         <section className="py-16 bg-cyber-darkgray">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-16">
-              <h2 className="font-cyber text-3xl font-bold mb-4">
+            <div className="text-center mb-16 flex items-center justify-center">
+              <h2 className="font-cyber text-3xl font-bold mb-0 mr-4">
                 <span className="neon-text-green">Cybersecurity</span>{" "}
-                <span className="neon-text-blue">Blog</span>
+                <span className="neon-text-blue">News</span>
               </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
-                Latest articles and insights from cybersecurity experts around the web.
-              </p>
+              <button 
+                onClick={handleRefreshBlogs}
+                className="p-2 rounded-full border border-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all duration-200"
+                title="Refresh news"
+                disabled={blogLoading}
+              >
+                <RefreshCw className={`h-5 w-5 text-cyber-blue ${blogLoading ? 'animate-spin' : ''}`} />
+              </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {blogPosts.map(post => (
-                <a 
-                  key={post.id}
-                  href={post.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
-                >
-                  <div className="mb-4">
-                    <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue`}>
-                      {post.category}
-                    </span>
-                    <span className="ml-2 text-xs text-gray-500">{post.date}</span>
-                  </div>
-                  
-                  <h3 className="font-cyber text-xl font-medium mb-3 text-white group-hover:text-cyber-blue transition-colors">
-                    {post.title}
-                  </h3>
-                  
-                  <p className="text-gray-400 mb-4 line-clamp-3">
-                    {post.summary}
-                  </p>
-                  
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
-                    <span className="text-sm text-gray-500">Source: {post.source}</span>
-                    <ChevronRight className="h-5 w-5 text-cyber-blue" />
-                  </div>
-                </a>
-              ))}
-            </div>
+            {blogLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="cyber-loader"></div>
+                <span className="ml-3 text-cyber-blue">Loading latest news...</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {blogPosts.map(post => (
+                  <a 
+                    key={post.id}
+                    href={post.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
+                  >
+                    <div className="mb-4">
+                      <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue`}>
+                        {post.category}
+                      </span>
+                      <span className="ml-2 text-xs text-gray-500">{post.date}</span>
+                    </div>
+                    
+                    <h3 className="font-cyber text-xl font-medium mb-3 text-white group-hover:text-cyber-blue transition-colors">
+                      {post.title}
+                    </h3>
+                    
+                    <p className="text-gray-400 mb-4 line-clamp-3">
+                      {post.summary}
+                    </p>
+                    
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+                      <span className="text-sm text-gray-500">Source: {post.source}</span>
+                      <ChevronRight className="h-5 w-5 text-cyber-blue" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
             
             <div className="mt-8 text-center">
               <a 
