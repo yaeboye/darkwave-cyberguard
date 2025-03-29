@@ -2,7 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, Lock, FileText, AlertTriangle, Wrench, ChevronRight, Key } from 'lucide-react';
+import { 
+  Shield, Lock, FileText, AlertTriangle, Wrench, ChevronRight, Key, 
+  Hash, Database, Globe, Search, QrCode
+} from 'lucide-react';
 import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
@@ -11,6 +14,86 @@ import TrendingThreats from '../components/TrendingThreats';
 
 const Index = () => {
   const [showTerminalText, setShowTerminalText] = useState(false);
+  const [blogPosts, setBlogPosts] = useState([
+    {
+      id: 1,
+      title: "The Rise of Ransomware as a Service",
+      summary: "Cybercriminals are now offering ransomware as a subscription model, lowering the barrier to entry for would-be attackers.",
+      category: "Threat Intel",
+      date: "June 5, 2023",
+      source: "Krebs on Security",
+      link: "https://krebsonsecurity.com/2023/06/ransomware-as-a-service-the-pandemic-within-a-pandemic/"
+    },
+    {
+      id: 2,
+      title: "Zero-Day Vulnerability Found in Popular VPN Service",
+      summary: "Security researchers discovered a critical vulnerability that allows remote code execution without authentication.",
+      category: "Vulnerabilities",
+      date: "July 12, 2023",
+      source: "The Hacker News",
+      link: "https://thehackernews.com/2023/07/zero-day-vulnerability-in-vpn-services.html"
+    },
+    {
+      id: 3,
+      title: "Why Multi-Factor Authentication Is Not Enough",
+      summary: "Recent bypass techniques show that MFA needs to be implemented carefully to remain effective.",
+      category: "Authentication",
+      date: "August 23, 2023",
+      source: "Dark Reading",
+      link: "https://www.darkreading.com/authentication/multi-factor-authentication-effectiveness"
+    }
+  ]);
+
+  const tools = [
+    {
+      id: 'password-checker',
+      title: 'Password Strength Checker',
+      description: 'Analyze your passwords for strength and vulnerability.',
+      icon: <Lock className="h-8 w-8 text-cyber-blue mr-3" />,
+      color: 'blue',
+      link: '/tools/password-checker'
+    },
+    {
+      id: 'password-generator',
+      title: 'Password Generator',
+      description: 'Create strong, secure passwords with custom options.',
+      icon: <Key className="h-8 w-8 text-cyber-pink mr-3" />,
+      color: 'pink',
+      link: '/tools/password-generator'
+    },
+    {
+      id: 'hash-generator',
+      title: 'Hash Generator',
+      description: 'Generate cryptographic hashes using various algorithms.',
+      icon: <Hash className="h-8 w-8 text-cyber-purple mr-3" />,
+      color: 'purple',
+      link: '/tools/hash-generator'
+    },
+    {
+      id: 'encryption',
+      title: 'Encryption & Decryption',
+      description: 'Secure your data with AES, RSA, and Base64 encryption.',
+      icon: <Shield className="h-8 w-8 text-cyber-green mr-3" />,
+      color: 'green',
+      link: '/tools/encryption'
+    },
+    {
+      id: 'threat-detection',
+      title: 'Threat Detection',
+      description: 'Scan for phishing attempts, malware, and other cyber threats.',
+      icon: <AlertTriangle className="h-8 w-8 text-cyber-red mr-3" />,
+      color: 'red',
+      link: '/tools/threat-detection'
+    },
+    {
+      id: 'password-manager',
+      title: 'Password Manager',
+      description: 'Securely store and organize all your passwords.',
+      icon: <Database className="h-8 w-8 text-cyber-yellow mr-3" />,
+      color: 'yellow',
+      link: '/tools/password-manager'
+    }
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -54,10 +137,10 @@ const Index = () => {
                 )}
                 
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                  <Link to="/tools" className="cyber-button flex items-center justify-center bg-cyber-blue text-black hover:text-black">
+                  <a href="#tools" className="cyber-button flex items-center justify-center bg-cyber-blue text-black hover:text-black">
                     <Wrench className="mr-2 h-5 w-5" />
                     Explore Tools
-                  </Link>
+                  </a>
                 </div>
               </div>
               
@@ -107,12 +190,12 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Features Section */}
-        <section className="py-16 bg-cyber-darkgray">
+        {/* Tools Section */}
+        <section id="tools" className="py-16 bg-cyber-darkgray">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center mb-16">
               <h2 className="font-cyber text-3xl font-bold mb-4">
-                <span className="neon-text-blue">Advanced Security</span>{" "}
+                <span className="neon-text-blue">Security</span>{" "}
                 <span className="neon-text-pink">Tools</span>
               </h2>
               <p className="text-gray-400 max-w-2xl mx-auto">
@@ -121,95 +204,96 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="cyber-card group">
-                <div className="flex items-center mb-4">
-                  <Lock className="h-8 w-8 text-cyber-blue mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Password Tools</h3>
-                </div>
-                <p className="text-gray-400 mb-4">
-                  Generate strong passwords and analyze your existing ones for vulnerabilities.
-                </p>
-                <Link to="/tools/password-generator" className="flex items-center text-cyber-blue hover:text-cyber-purple transition-colors">
-                  Explore
-                  <ChevronRight className="h-4 w-4 ml-1" />
+              {tools.map((tool) => (
+                <Link 
+                  key={tool.id}
+                  to={tool.link}
+                  className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
+                >
+                  <div className="flex items-center mb-4">
+                    {tool.icon}
+                    <h3 className="font-cyber text-xl font-semibold text-white">{tool.title}</h3>
+                  </div>
+                  <p className="text-gray-400 mb-4">
+                    {tool.description}
+                  </p>
+                  <div className={`flex justify-end text-cyber-${tool.color}`}>
+                    <ChevronRight className="h-5 w-5" />
+                  </div>
                 </Link>
-              </div>
-              
-              <div className="cyber-card group">
-                <div className="flex items-center mb-4">
-                  <Key className="h-8 w-8 text-cyber-green mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Password Manager</h3>
-                </div>
-                <p className="text-gray-400 mb-4">
-                  Securely store and organize all your passwords in an encrypted vault.
-                </p>
-                <Link to="/tools/password-manager" className="flex items-center text-cyber-green hover:text-cyber-blue transition-colors">
-                  Explore
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
-              
-              <div className="cyber-card group">
-                <div className="flex items-center mb-4">
-                  <Shield className="h-8 w-8 text-cyber-purple mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Encryption Suite</h3>
-                </div>
-                <p className="text-gray-400 mb-4">
-                  Encrypt and decrypt sensitive data using industry-standard algorithms.
-                </p>
-                <Link to="/tools/encryption" className="flex items-center text-cyber-purple hover:text-cyber-blue transition-colors">
-                  Explore
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
-              
-              <div className="cyber-card group">
-                <div className="flex items-center mb-4">
-                  <AlertTriangle className="h-8 w-8 text-cyber-red mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Threat Detection</h3>
-                </div>
-                <p className="text-gray-400 mb-4">
-                  Scan for phishing attempts, malware, and other cyber threats.
-                </p>
-                <Link to="/tools/threat-detection" className="flex items-center text-cyber-red hover:text-cyber-blue transition-colors">
-                  Explore
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
-              
-              <div className="cyber-card group">
-                <div className="flex items-center mb-4">
-                  <FileText className="h-8 w-8 text-cyber-green mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Security Resources</h3>
-                </div>
-                <p className="text-gray-400 mb-4">
-                  Access educational resources about cybersecurity best practices.
-                </p>
-                <Link to="/tools" className="flex items-center text-cyber-green hover:text-cyber-blue transition-colors">
-                  Explore
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
-              
-              <div className="cyber-card group">
-                <div className="flex items-center mb-4">
-                  <Wrench className="h-8 w-8 text-cyber-yellow mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Hash Generator</h3>
-                </div>
-                <p className="text-gray-400 mb-4">
-                  Create and verify cryptographic hashes using various algorithms.
-                </p>
-                <Link to="/tools/hash-generator" className="flex items-center text-cyber-yellow hover:text-cyber-blue transition-colors">
-                  Explore
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
+              ))}
+            </div>
+            
+            <div className="mt-8 text-center">
+              <Link to="/tools" className="cyber-button inline-flex items-center justify-center">
+                <Wrench className="mr-2 h-5 w-5" />
+                View All Tools
+              </Link>
             </div>
           </div>
         </section>
         
         {/* Trending Threats Section */}
         <TrendingThreats />
+        
+        {/* Blog Posts Section */}
+        <section className="py-16 bg-cyber-darkgray">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center mb-16">
+              <h2 className="font-cyber text-3xl font-bold mb-4">
+                <span className="neon-text-green">Cybersecurity</span>{" "}
+                <span className="neon-text-blue">Blog</span>
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                Latest articles and insights from cybersecurity experts around the web.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {blogPosts.map(post => (
+                <a 
+                  key={post.id}
+                  href={post.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
+                >
+                  <div className="mb-4">
+                    <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue`}>
+                      {post.category}
+                    </span>
+                    <span className="ml-2 text-xs text-gray-500">{post.date}</span>
+                  </div>
+                  
+                  <h3 className="font-cyber text-xl font-medium mb-3 text-white group-hover:text-cyber-blue transition-colors">
+                    {post.title}
+                  </h3>
+                  
+                  <p className="text-gray-400 mb-4 line-clamp-3">
+                    {post.summary}
+                  </p>
+                  
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+                    <span className="text-sm text-gray-500">Source: {post.source}</span>
+                    <ChevronRight className="h-5 w-5 text-cyber-blue" />
+                  </div>
+                </a>
+              ))}
+            </div>
+            
+            <div className="mt-8 text-center">
+              <a 
+                href="https://www.darkreading.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cyber-button inline-flex items-center justify-center"
+              >
+                <FileText className="mr-2 h-5 w-5" />
+                Read More Articles
+              </a>
+            </div>
+          </div>
+        </section>
         
         {/* CTA Section */}
         <section className="py-20 bg-cyber-black relative overflow-hidden">
@@ -223,16 +307,12 @@ const Index = () => {
               </h2>
               
               <p className="text-gray-400 mb-8 text-lg">
-                Explore our full suite of advanced cybersecurity tools today.
+                Start using CyberGuard today and access our full suite of advanced cybersecurity tools.
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link to="/tools" className="cyber-button bg-cyber-purple text-white hover:text-white">
-                  Explore Tools
-                </Link>
-                
-                <Link to="/feedback" className="cyber-button">
-                  Give Feedback
+                  Explore All Tools
                 </Link>
               </div>
             </div>
