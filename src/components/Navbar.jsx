@@ -29,9 +29,9 @@ const Navbar = () => {
               <Wrench className="mr-1 h-4 w-4" />
               <span>Tools</span>
             </Link>
-            <Link to="/news" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
+            <Link to="/guides" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
               <FileText className="mr-1 h-4 w-4" />
-              <span>News</span>
+              <span>Guides</span>
             </Link>
             <Link to="/feedback" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
               <MessageSquare className="mr-1 h-4 w-4" />
@@ -72,12 +72,12 @@ const Navbar = () => {
               <span>Tools</span>
             </Link>
             <Link 
-              to="/news" 
+              to="/guides" 
               className="block font-cyber py-2 px-4 text-white hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
               onClick={toggleMenu}
             >
               <FileText className="mr-2 h-4 w-4" />
-              <span>News</span>
+              <span>Guides</span>
             </Link>
             <Link 
               to="/feedback" 

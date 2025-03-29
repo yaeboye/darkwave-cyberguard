@@ -7,18 +7,22 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Pages
-import Index from "./pages/Index.jsx";
+import Index from "./pages/Index.tsx";
 import Tools from "./pages/Tools.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Feedback from "./pages/Feedback.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import TermsOfService from "./pages/TermsOfService.tsx";
 import Contact from "./pages/Contact.tsx";
+import SecurityGuides from "./pages/SecurityGuides.tsx";
 
 // Tool Pages
 import PasswordChecker from "./pages/tools/PasswordChecker.tsx";
 import PasswordGenerator from "./pages/tools/PasswordGenerator.tsx";
 import PasswordManager from "./pages/tools/PasswordManager.tsx";
+import HashGenerator from "./pages/tools/HashGenerator.tsx";
+import Encryption from "./pages/tools/Encryption.tsx";
+import ThreatDetection from "./pages/tools/ThreatDetection.tsx";
 
 // Create a new query client for React Query
 const queryClient = new QueryClient({
@@ -38,6 +42,7 @@ const AppContent = () => {
         <Route path="/" element={<Index />} />
         <Route path="/tools" element={<Tools />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/guides" element={<SecurityGuides />} />
         
         {/* Legal Pages */}
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -48,6 +53,9 @@ const AppContent = () => {
         <Route path="/tools/password-checker" element={<PasswordChecker />} />
         <Route path="/tools/password-generator" element={<PasswordGenerator />} />
         <Route path="/tools/password-manager" element={<PasswordManager />} />
+        <Route path="/tools/hash-generator" element={<HashGenerator />} />
+        <Route path="/tools/encryption" element={<Encryption />} />
+        <Route path="/tools/threat-detection" element={<ThreatDetection />} />
         
         {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
