@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -6,8 +7,6 @@ import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import HomeNewsSection from '../components/HomeNewsSection';
-import HomeBlogSection from '../components/HomeBlogSection';
 import TrendingThreats from '../components/TrendingThreats';
 
 const Index = () => {
@@ -58,10 +57,6 @@ const Index = () => {
                   <Link to="/tools" className="cyber-button flex items-center justify-center bg-cyber-blue text-black hover:text-black">
                     <Wrench className="mr-2 h-5 w-5" />
                     Explore Tools
-                  </Link>
-                  <Link to="/login" className="cyber-button flex items-center justify-center">
-                    <Lock className="mr-2 h-5 w-5" />
-                    Secure Login
                   </Link>
                 </div>
               </div>
@@ -185,12 +180,12 @@ const Index = () => {
               <div className="cyber-card group">
                 <div className="flex items-center mb-4">
                   <FileText className="h-8 w-8 text-cyber-green mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Security News</h3>
+                  <h3 className="font-cyber text-xl font-semibold text-white">Security Resources</h3>
                 </div>
                 <p className="text-gray-400 mb-4">
-                  Stay updated with the latest cybersecurity news and advisories.
+                  Access educational resources about cybersecurity best practices.
                 </p>
-                <Link to="/news" className="flex items-center text-cyber-green hover:text-cyber-blue transition-colors">
+                <Link to="/tools" className="flex items-center text-cyber-green hover:text-cyber-blue transition-colors">
                   Explore
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
@@ -213,14 +208,8 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Trending Threats Section - NEW */}
+        {/* Trending Threats Section */}
         <TrendingThreats />
-        
-        {/* Blog Section */}
-        <HomeBlogSection />
-        
-        {/* News Section */}
-        <HomeNewsSection />
         
         {/* CTA Section */}
         <section className="py-20 bg-cyber-black relative overflow-hidden">
@@ -234,16 +223,16 @@ const Index = () => {
               </h2>
               
               <p className="text-gray-400 mb-8 text-lg">
-                Join CyberGuard today and gain access to our full suite of advanced cybersecurity tools.
+                Explore our full suite of advanced cybersecurity tools today.
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <Link to="/register" className="cyber-button bg-cyber-purple text-white hover:text-white">
-                  Register Now
+                <Link to="/tools" className="cyber-button bg-cyber-purple text-white hover:text-white">
+                  Explore Tools
                 </Link>
                 
-                <Link to="/tools" className="cyber-button">
-                  Explore Tools
+                <Link to="/feedback" className="cyber-button">
+                  Give Feedback
                 </Link>
               </div>
             </div>
