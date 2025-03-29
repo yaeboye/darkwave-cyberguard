@@ -14,6 +14,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import SecurityGuides from "./pages/SecurityGuides";
 import PasswordManager from "./pages/tools/PasswordManager";
+import Feedback from "./pages/Feedback";
 
 function App() {
   return (
@@ -29,8 +30,9 @@ function App() {
         <Route path="/tools/password-manager" element={<PasswordManager />} />
         <Route path="/guides" element={<SecurityGuides />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/feedback" element={<Feedback />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
