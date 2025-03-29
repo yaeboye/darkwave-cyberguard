@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Shield, Lock, FileText, AlertTriangle, Wrench, ChevronRight, Key, 
-  Hash, Database, Globe, Search, QrCode
+  Hash, Database, Globe, Search, QrCode, RefreshCw
 } from 'lucide-react';
 import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
