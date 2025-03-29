@@ -7,8 +7,6 @@ import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import HomeNewsSection from '../components/HomeNewsSection';
-import HomeBlogSection from '../components/HomeBlogSection';
 import TrendingThreats from '../components/TrendingThreats';
 
 const Index = () => {
@@ -182,12 +180,12 @@ const Index = () => {
               <div className="cyber-card group">
                 <div className="flex items-center mb-4">
                   <FileText className="h-8 w-8 text-cyber-green mr-3" />
-                  <h3 className="font-cyber text-xl font-semibold text-white">Security News</h3>
+                  <h3 className="font-cyber text-xl font-semibold text-white">Security Guides</h3>
                 </div>
                 <p className="text-gray-400 mb-4">
-                  Stay updated with the latest cybersecurity news and advisories.
+                  Browse comprehensive guides on cybersecurity best practices.
                 </p>
-                <Link to="/news" className="flex items-center text-cyber-green hover:text-cyber-blue transition-colors">
+                <Link to="/guides" className="flex items-center text-cyber-green hover:text-cyber-blue transition-colors">
                   Explore
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
@@ -213,12 +211,6 @@ const Index = () => {
         {/* Trending Threats Section */}
         <TrendingThreats />
         
-        {/* Blog Section */}
-        <HomeBlogSection />
-        
-        {/* News Section */}
-        <HomeNewsSection />
-        
         {/* CTA Section */}
         <section className="py-20 bg-cyber-black relative overflow-hidden">
           <div className="absolute inset-0 cyber-grid-bg opacity-5"></div>
@@ -231,7 +223,7 @@ const Index = () => {
               </h2>
               
               <p className="text-gray-400 mb-8 text-lg">
-                Join CyberGuard today and gain access to our full suite of advanced cybersecurity tools.
+                Start using CyberGuard today and access our full suite of advanced cybersecurity tools.
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">

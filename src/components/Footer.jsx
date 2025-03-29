@@ -17,19 +17,15 @@ const Footer = () => {
               Securing your digital future with cutting-edge cybersecurity tools and resources.
             </p>
             <div className="flex space-x-4 mt-4">
-              <a href="#" className="text-gray-400 hover:text-cyber-blue transition-colors">
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-cyber-blue transition-colors">
+              <a href="https://github.com/yaeboye" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyber-blue transition-colors">
                 <Github className="h-5 w-5" />
                 <span className="sr-only">GitHub</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-cyber-blue transition-colors">
+              <a href="https://www.linkedin.com/in/satvik-jindal-943275276" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyber-blue transition-colors">
                 <Linkedin className="h-5 w-5" />
                 <span className="sr-only">LinkedIn</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-cyber-blue transition-colors">
+              <a href="mailto:satvikj570@gmail.com" className="text-gray-400 hover:text-cyber-blue transition-colors">
                 <Mail className="h-5 w-5" />
                 <span className="sr-only">Email</span>
               </a>
@@ -41,7 +37,6 @@ const Footer = () => {
             <ul className="space-y-2">
               <li><Link to="/" className="text-gray-400 hover:text-cyber-blue transition-colors">Home</Link></li>
               <li><Link to="/tools" className="text-gray-400 hover:text-cyber-blue transition-colors">Tools</Link></li>
-              <li><Link to="/news" className="text-gray-400 hover:text-cyber-blue transition-colors">News</Link></li>
               <li><Link to="/feedback" className="text-gray-400 hover:text-cyber-blue transition-colors">Feedback</Link></li>
             </ul>
           </div>
