@@ -1,193 +1,202 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { 
-  Key, Lock, Copy, Eye, EyeOff, Plus, Edit, Trash2, 
-  ArrowLeft, Globe, User, FileText, Save, X, Search
-} from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { Link } from 'react-router-dom';
+import { Lock, Eye, EyeOff, PlusCircle, Trash2, Edit, Save, X, Copy, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import CyberHeader from '@/components/CyberHeader';
+import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import CyberHeader from '@/components/CyberHeader';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface StoredPassword {
+interface Password {
   id: string;
   site_name: string;
   username: string;
   password: string;
-  url: string | null;
-  notes: string | null;
+  notes?: string;
+  url?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface NewPassword {
+  site_name: string;
+  username: string;
+  password: string;
+  notes?: string;
+  url?: string;
 }
 
 const PasswordManager = () => {
-  const { user, loading } = useAuth();
   const { toast } = useToast();
   
-  const [passwords, setPasswords] = useState<StoredPassword[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [demoPasswords, setDemoPasswords] = useState<Password[]>([
+    {
+      id: '1',
+      site_name: 'Example Email',
+      username: 'user@example.com',
+      password: 'ExamplePassword123!',
+      notes: 'Personal email account',
+      url: 'https://mail.example.com',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: '2',
+      site_name: 'Social Media',
+      username: 'username123',
+      password: 'SocialPassword456!',
+      url: 'https://social.example.com',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: '3',
+      site_name: 'Banking',
+      username: 'bankuser',
+      password: 'SecureBankPass789!',
+      notes: 'Main checking account',
+      url: 'https://bank.example.com',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  ]);
+  
+  const [passwords, setPasswords] = useState<Password[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAddEditModal, setShowAddEditModal] = useState(false);
-  const [editingPassword, setEditingPassword] = useState<StoredPassword | null>(null);
+  const [showPassword, setShowPassword] = useState<{ [key: string]: boolean }>({});
   
-  const [siteName, setSiteName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [url, setUrl] = useState('');
-  const [notes, setNotes] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState<NewPassword>({
+    site_name: '',
+    username: '',
+    password: '',
+    notes: '',
+    url: ''
+  });
   
-  // Redirect if not logged in
-  if (!loading && !user) {
-    return <Navigate to="/auth" />;
-  }
-  
-  // Fetch passwords on component mount
   useEffect(() => {
-    if (user) {
-      fetchPasswords();
-    }
-  }, [user]);
+    // Since we removed auth, we'll just use the demo passwords
+    setPasswords(demoPasswords);
+    setLoading(false);
+  }, []);
   
-  const fetchPasswords = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from('stored_passwords')
-        .select('*')
-        .order('site_name', { ascending: true });
-      
-      if (error) throw error;
-      
-      setPasswords(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to load passwords",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const togglePasswordVisibility = (id: string) => {
+    setShowPassword(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
   };
   
-  const handleAddEditPassword = async (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewPassword(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  const handleEditChange = (id: string, field: keyof Password, value: string) => {
+    setPasswords(prev => 
+      prev.map(password => 
+        password.id === id ? { ...password, [field]: value } : password
+      )
+    );
+  };
+  
+  const addPassword = (e: React.FormEvent) => {
     e.preventDefault();
     
-    try {
-      if (editingPassword) {
-        // Update existing password
-        const { error } = await supabase
-          .from('stored_passwords')
-          .update({
-            site_name: siteName,
-            username,
-            password,
-            url,
-            notes,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', editingPassword.id);
-        
-        if (error) throw error;
-        
-        toast({
-          title: "Password updated",
-          description: `Your ${siteName} password has been updated.`,
-        });
-      } else {
-        // Add new password
-        const { error } = await supabase
-          .from('stored_passwords')
-          .insert({
-            user_id: user!.id,
-            site_name: siteName,
-            username,
-            password,
-            url,
-            notes,
-          });
-        
-        if (error) throw error;
-        
-        toast({
-          title: "Password saved",
-          description: `Your ${siteName} password has been stored securely.`,
-        });
-      }
-      
-      // Reset form and close modal
-      resetForm();
-      setShowAddEditModal(false);
-      fetchPasswords();
-    } catch (error: any) {
+    // Validation
+    if (!newPassword.site_name || !newPassword.username || !newPassword.password) {
       toast({
         title: "Error",
-        description: error.message || "Failed to save password",
+        description: "Site name, username and password are required",
         variant: "destructive",
       });
+      return;
     }
-  };
-  
-  const handleDeletePassword = async (id: string, siteName: string) => {
-    if (confirm(`Are you sure you want to delete the password for ${siteName}?`)) {
-      try {
-        const { error } = await supabase
-          .from('stored_passwords')
-          .delete()
-          .eq('id', id);
-        
-        if (error) throw error;
-        
-        toast({
-          title: "Password deleted",
-          description: `Your ${siteName} password has been removed.`,
-        });
-        
-        fetchPasswords();
-      } catch (error: any) {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to delete password",
-          variant: "destructive",
-        });
-      }
-    }
-  };
-  
-  const handleEdit = (password: StoredPassword) => {
-    setEditingPassword(password);
-    setSiteName(password.site_name);
-    setUsername(password.username);
-    setPassword(password.password);
-    setUrl(password.url || '');
-    setNotes(password.notes || '');
-    setShowAddEditModal(true);
-  };
-  
-  const resetForm = () => {
-    setEditingPassword(null);
-    setSiteName('');
-    setUsername('');
-    setPassword('');
-    setUrl('');
-    setNotes('');
-    setShowPassword(false);
-  };
-  
-  const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text);
+    
+    // In a real application, this would be generated by the database
+    const newId = Math.random().toString(36).substring(2, 11);
+    
+    // Create a new password entry
+    const passwordEntry: Password = {
+      id: newId,
+      ...newPassword,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    // Add to state
+    setPasswords(prev => [passwordEntry, ...prev]);
+    
+    // Reset form
+    setNewPassword({
+      site_name: '',
+      username: '',
+      password: '',
+      notes: '',
+      url: ''
+    });
+    
+    setShowAddForm(false);
+    
     toast({
-      title: "Copied",
-      description: `${type} copied to clipboard`,
+      title: "Success",
+      description: "Password saved successfully",
     });
   };
   
-  // Filter passwords based on search term
-  const filteredPasswords = passwords.filter(pw => 
-    pw.site_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    pw.username.toLowerCase().includes(searchTerm.toLowerCase())
+  const startEditing = (id: string) => {
+    setEditingId(id);
+  };
+  
+  const cancelEditing = () => {
+    setEditingId(null);
+  };
+  
+  const saveEdit = (id: string) => {
+    // Update the modified_at date
+    setPasswords(prev => 
+      prev.map(password => 
+        password.id === id ? { ...password, updated_at: new Date().toISOString() } : password
+      )
+    );
+    
+    setEditingId(null);
+    
+    toast({
+      title: "Success",
+      description: "Password updated successfully",
+    });
+  };
+  
+  const deletePassword = (id: string) => {
+    setPasswords(prev => prev.filter(password => password.id !== id));
+    
+    toast({
+      title: "Success",
+      description: "Password deleted successfully",
+    });
+  };
+  
+  const copyToClipboard = (text: string, itemName: string) => {
+    navigator.clipboard.writeText(text);
+    
+    toast({
+      title: "Copied",
+      description: `${itemName} copied to clipboard`,
+    });
+  };
+  
+  const filteredPasswords = passwords.filter(password => 
+    password.site_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    password.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (password.url && password.url.toLowerCase().includes(searchTerm.toLowerCase()))
   );
   
   return (
@@ -197,278 +206,372 @@ const PasswordManager = () => {
       
       <main className="flex-grow py-12 bg-cyber-black">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="mb-6">
-            <Link to="/tools" className="flex items-center text-gray-400 hover:text-cyber-blue transition-colors">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              <span>Back to Tools</span>
-            </Link>
-          </div>
-          
           <CyberHeader 
-            title="Password Vault" 
-            subtitle="Securely store and manage your passwords. All data is encrypted and only accessible to you."
+            title="Password Manager" 
+            subtitle="Securely store and manage your passwords in one place. This is a demo version with sample passwords only."
           />
           
-          <div className="cyber-card mb-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-              <div className="relative w-full md:w-auto flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+          <div className="bg-cyber-darkgray border border-cyber-blue p-4 rounded-lg mb-6">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center flex-grow">
+                <Search className="h-5 w-5 text-cyber-blue mr-2" />
                 <input
                   type="text"
                   placeholder="Search passwords..."
+                  className="cyber-input flex-grow"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="cyber-input pl-10 w-full"
                 />
               </div>
               
-              <button
-                className="cyber-button w-full md:w-auto flex items-center justify-center"
-                onClick={() => {
-                  resetForm();
-                  setShowAddEditModal(true);
-                }}
+              <button 
+                className="cyber-button flex items-center"
+                onClick={() => setShowAddForm(!showAddForm)}
               >
-                <Plus className="mr-2 h-5 w-5" />
-                Add New Password
+                {showAddForm ? (
+                  <>
+                    <X className="mr-2 h-4 w-4" />
+                    Cancel
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Password
+                  </>
+                )}
               </button>
             </div>
             
-            {isLoading ? (
-              <div className="text-center py-12">
-                <div className="animate-pulse text-cyber-blue">Loading your passwords...</div>
-              </div>
-            ) : filteredPasswords.length === 0 ? (
-              <div className="text-center py-12 border border-dashed border-gray-700 rounded-md">
-                <Lock className="mx-auto h-12 w-12 text-gray-600 mb-4" />
-                <h3 className="text-xl font-cyber text-gray-400 mb-2">No passwords found</h3>
-                <p className="text-gray-500 mb-4">
-                  {searchTerm ? 'No passwords match your search' : 'Start adding passwords to your secure vault'}
-                </p>
-                {searchTerm ? (
+            {showAddForm && (
+              <form onSubmit={addPassword} className="mt-6 p-4 bg-cyber-black border border-gray-700 rounded-lg">
+                <h3 className="font-cyber text-lg mb-4 text-white">Add New Password</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-gray-400 mb-2">Site Name*</label>
+                    <input
+                      type="text"
+                      name="site_name"
+                      value={newPassword.site_name}
+                      onChange={handleInputChange}
+                      className="cyber-input w-full"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-400 mb-2">URL</label>
+                    <input
+                      type="text"
+                      name="url"
+                      value={newPassword.url}
+                      onChange={handleInputChange}
+                      className="cyber-input w-full"
+                      placeholder="https://"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-gray-400 mb-2">Username / Email*</label>
+                    <input
+                      type="text"
+                      name="username"
+                      value={newPassword.username}
+                      onChange={handleInputChange}
+                      className="cyber-input w-full"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-400 mb-2">Password*</label>
+                    <div className="relative">
+                      <input
+                        type={showPassword['new'] ? "text" : "password"}
+                        name="password"
+                        value={newPassword.password}
+                        onChange={handleInputChange}
+                        className="cyber-input w-full pr-10"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => togglePasswordVisibility('new')}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cyber-blue"
+                      >
+                        {showPassword['new'] ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <label className="block text-gray-400 mb-2">Notes</label>
+                  <textarea
+                    name="notes"
+                    value={newPassword.notes}
+                    onChange={handleInputChange}
+                    className="cyber-input w-full min-h-[100px]"
+                  ></textarea>
+                </div>
+                
+                <div className="flex justify-end">
                   <button
-                    onClick={() => setSearchTerm('')}
-                    className="text-cyber-blue hover:text-cyber-purple transition-colors"
+                    type="submit"
+                    className="cyber-button flex items-center"
                   >
-                    Clear search
+                    <Save className="mr-2 h-4 w-4" />
+                    Save Password
                   </button>
-                ) : (
-                  <button
-                    onClick={() => setShowAddEditModal(true)}
-                    className="cyber-button"
-                  >
-                    <Plus className="mr-2 h-5 w-5" />
-                    Add Your First Password
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-800">
-                      <th className="py-3 px-4 text-left text-gray-400">Site</th>
-                      <th className="py-3 px-4 text-left text-gray-400">Username</th>
-                      <th className="py-3 px-4 text-left text-gray-400">Password</th>
-                      <th className="py-3 px-4 text-left text-gray-400">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredPasswords.map((pw) => (
-                      <tr key={pw.id} className="border-b border-gray-800 hover:bg-gray-900/50">
-                        <td className="py-4 px-4">
-                          <div className="flex items-center">
-                            <Globe className="h-5 w-5 text-cyber-purple mr-2" />
-                            <span className="font-medium">{pw.site_name}</span>
-                          </div>
-                          {pw.url && (
-                            <a 
-                              href={pw.url.startsWith('http') ? pw.url : `https://${pw.url}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-xs text-cyber-blue hover:underline mt-1 block"
-                            >
-                              {pw.url}
-                            </a>
-                          )}
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center">
-                            <User className="h-5 w-5 text-cyber-blue mr-2" />
-                            <span>{pw.username}</span>
-                            <button
-                              onClick={() => copyToClipboard(pw.username, 'Username')}
-                              className="ml-2 text-gray-400 hover:text-cyber-blue"
-                              aria-label="Copy username"
-                            >
-                              <Copy className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center">
-                            <Lock className="h-5 w-5 text-cyber-green mr-2" />
-                            <span className="font-mono">••••••••••</span>
-                            <button
-                              onClick={() => copyToClipboard(pw.password, 'Password')}
-                              className="ml-2 text-gray-400 hover:text-cyber-blue"
-                              aria-label="Copy password"
-                            >
-                              <Copy className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center space-x-2">
-                            <button
-                              onClick={() => handleEdit(pw)}
-                              className="p-1 text-gray-400 hover:text-cyber-blue"
-                              aria-label="Edit"
-                            >
-                              <Edit className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeletePassword(pw.id, pw.site_name)}
-                              className="p-1 text-gray-400 hover:text-cyber-red"
-                              aria-label="Delete"
-                            >
-                              <Trash2 className="h-5 w-5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                </div>
+              </form>
             )}
           </div>
+          
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="text-cyber-blue animate-pulse">Loading passwords...</div>
+            </div>
+          ) : (
+            <>
+              {filteredPasswords.length > 0 ? (
+                <div className="grid gap-4">
+                  {filteredPasswords.map((password) => (
+                    <div key={password.id} className="cyber-card hover:border-cyber-blue transition-all">
+                      {editingId === password.id ? (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-gray-400 mb-2">Site Name</label>
+                              <input
+                                type="text"
+                                value={password.site_name}
+                                onChange={(e) => handleEditChange(password.id, 'site_name', e.target.value)}
+                                className="cyber-input w-full"
+                              />
+                            </div>
+                            
+                            <div>
+                              <label className="block text-gray-400 mb-2">URL</label>
+                              <input
+                                type="text"
+                                value={password.url || ''}
+                                onChange={(e) => handleEditChange(password.id, 'url', e.target.value)}
+                                className="cyber-input w-full"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-gray-400 mb-2">Username / Email</label>
+                              <input
+                                type="text"
+                                value={password.username}
+                                onChange={(e) => handleEditChange(password.id, 'username', e.target.value)}
+                                className="cyber-input w-full"
+                              />
+                            </div>
+                            
+                            <div>
+                              <label className="block text-gray-400 mb-2">Password</label>
+                              <div className="relative">
+                                <input
+                                  type={showPassword[password.id] ? "text" : "password"}
+                                  value={password.password}
+                                  onChange={(e) => handleEditChange(password.id, 'password', e.target.value)}
+                                  className="cyber-input w-full pr-10"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => togglePasswordVisibility(password.id)}
+                                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cyber-blue"
+                                >
+                                  {showPassword[password.id] ? (
+                                    <EyeOff className="h-5 w-5" />
+                                  ) : (
+                                    <Eye className="h-5 w-5" />
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <label className="block text-gray-400 mb-2">Notes</label>
+                            <textarea
+                              value={password.notes || ''}
+                              onChange={(e) => handleEditChange(password.id, 'notes', e.target.value)}
+                              className="cyber-input w-full min-h-[100px]"
+                            ></textarea>
+                          </div>
+                          
+                          <div className="flex justify-end space-x-2">
+                            <button
+                              onClick={cancelEditing}
+                              className="cyber-button-outline flex items-center"
+                            >
+                              <X className="mr-2 h-4 w-4" />
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => saveEdit(password.id)}
+                              className="cyber-button flex items-center"
+                            >
+                              <Save className="mr-2 h-4 w-4" />
+                              Save Changes
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <h3 className="font-cyber text-lg text-white">{password.site_name}</h3>
+                              {password.url && (
+                                <a 
+                                  href={password.url.startsWith('http') ? password.url : `https://${password.url}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-cyber-blue hover:text-cyber-purple text-sm"
+                                >
+                                  {password.url}
+                                </a>
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Updated: {new Date(password.updated_at).toLocaleDateString()}
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                              <div className="flex justify-between items-center mb-1">
+                                <label className="text-gray-400 text-sm">Username / Email</label>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <button 
+                                        onClick={() => copyToClipboard(password.username, 'Username')}
+                                        className="text-gray-400 hover:text-cyber-blue"
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Copy to clipboard</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
+                              <div className="bg-cyber-darkgray border border-gray-700 p-2 rounded overflow-x-auto">
+                                {password.username}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <div className="flex justify-between items-center mb-1">
+                                <label className="text-gray-400 text-sm">Password</label>
+                                <div className="flex items-center space-x-2">
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <button 
+                                          onClick={() => copyToClipboard(password.password, 'Password')}
+                                          className="text-gray-400 hover:text-cyber-blue"
+                                        >
+                                          <Copy className="h-4 w-4" />
+                                        </button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Copy to clipboard</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                  
+                                  <button
+                                    onClick={() => togglePasswordVisibility(password.id)}
+                                    className="text-gray-400 hover:text-cyber-blue"
+                                  >
+                                    {showPassword[password.id] ? (
+                                      <EyeOff className="h-4 w-4" />
+                                    ) : (
+                                      <Eye className="h-4 w-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="bg-cyber-darkgray border border-gray-700 p-2 rounded font-mono">
+                                {showPassword[password.id] ? password.password : '••••••••••••'}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {password.notes && (
+                            <div className="mb-4">
+                              <label className="block text-gray-400 text-sm mb-1">Notes</label>
+                              <div className="bg-cyber-darkgray border border-gray-700 p-2 rounded">
+                                {password.notes}
+                              </div>
+                            </div>
+                          )}
+                          
+                          <div className="flex justify-end space-x-2">
+                            <button
+                              onClick={() => deletePassword(password.id)}
+                              className="cyber-button-outline flex items-center text-cyber-red hover:text-cyber-red"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </button>
+                            <button
+                              onClick={() => startEditing(password.id)}
+                              className="cyber-button flex items-center"
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="cyber-card text-center py-10">
+                  <Lock className="h-12 w-12 text-cyber-blue mx-auto mb-4" />
+                  <h3 className="font-cyber text-xl mb-2">No Passwords Found</h3>
+                  <p className="text-gray-400 mb-6">
+                    {searchTerm ? 'No passwords match your search criteria.' : 'You have not added any passwords yet.'}
+                  </p>
+                  {searchTerm ? (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="cyber-button"
+                    >
+                      Clear Search
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowAddForm(true)}
+                      className="cyber-button flex items-center mx-auto"
+                    >
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Add Your First Password
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </main>
-      
-      {/* Add/Edit Password Modal */}
-      {showAddEditModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="cyber-card w-full max-w-md">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-cyber neon-text-blue">
-                {editingPassword ? 'Edit Password' : 'Add New Password'}
-              </h3>
-              <button 
-                onClick={() => setShowAddEditModal(false)}
-                className="text-gray-400 hover:text-cyber-red"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            
-            <form onSubmit={handleAddEditPassword} className="space-y-4">
-              <div>
-                <label htmlFor="siteName" className="block text-gray-400 mb-1">
-                  Site Name*
-                </label>
-                <input
-                  id="siteName"
-                  type="text"
-                  value={siteName}
-                  onChange={(e) => setSiteName(e.target.value)}
-                  className="cyber-input w-full"
-                  placeholder="Google, Twitter, etc."
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="username" className="block text-gray-400 mb-1">
-                  Username/Email*
-                </label>
-                <input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="cyber-input w-full"
-                  placeholder="your.email@example.com"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-gray-400 mb-1">
-                  Password*
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="cyber-input w-full pr-10"
-                    placeholder="Enter password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cyber-blue"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
-                <div className="mt-2">
-                  <Link to="/tools/password-generator" className="text-xs text-cyber-blue hover:underline">
-                    Generate strong password
-                  </Link>
-                </div>
-              </div>
-              
-              <div>
-                <label htmlFor="url" className="block text-gray-400 mb-1">
-                  Website URL <span className="text-gray-500">(optional)</span>
-                </label>
-                <input
-                  id="url"
-                  type="text"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  className="cyber-input w-full"
-                  placeholder="https://example.com"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="notes" className="block text-gray-400 mb-1">
-                  Notes <span className="text-gray-500">(optional)</span>
-                </label>
-                <textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="cyber-input w-full min-h-[80px]"
-                  placeholder="Additional information..."
-                />
-              </div>
-              
-              <div className="flex space-x-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowAddEditModal(false)}
-                  className="flex-1 py-2 px-4 border border-gray-700 rounded-md text-gray-300 hover:bg-gray-800 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 cyber-button flex items-center justify-center"
-                >
-                  <Save className="mr-2 h-5 w-5" />
-                  {editingPassword ? 'Update' : 'Save'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
       
       <Footer />
     </div>

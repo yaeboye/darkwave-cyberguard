@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Twitter, Github, Linkedin, Mail } from 'lucide-react';
+import { Shield, Github, Linkedin, Mail } from 'lucide-react';
 
 const Footer = () => {
   return (

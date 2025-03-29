@@ -1,8 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Send, ArrowLeft, ThumbsUp, AlertTriangle, Bug } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import CyberHeader from '@/components/CyberHeader';
@@ -18,7 +17,6 @@ interface FeedbackType {
 }
 
 const Feedback = () => {
-  const { user } = useAuth();
   const { toast } = useToast();
   
   const [content, setContent] = useState('');
@@ -67,7 +65,7 @@ const Feedback = () => {
         .insert({
           content,
           type,
-          user_id: user?.id || null
+          user_id: null // No user authentication, so set to null
         });
       
       if (error) throw error;
