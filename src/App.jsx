@@ -15,6 +15,7 @@ import TermsOfService from "./pages/TermsOfService";
 import SecurityGuides from "./pages/SecurityGuides";
 import PasswordManager from "./pages/tools/PasswordManager";
 import Feedback from "./pages/Feedback";
+import NewsSection from "./components/NewsSection";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/tools/threat-detection" element={<ThreatDetection />} />
         <Route path="/tools/password-manager" element={<PasswordManager />} />
         <Route path="/guides" element={<SecurityGuides />} />
+        <Route path="/news" element={<NewsSection />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />

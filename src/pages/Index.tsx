@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -266,6 +267,7 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Add NewsSection component here to display it on the homepage */}
         <NewsSection />
       
         <section id="tools" className="py-16 bg-cyber-darkgray">

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Github, Linkedin, Mail } from 'lucide-react';
+import { Shield, Github, Linkedin, Mail, Newspaper } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -36,6 +36,7 @@ const Footer = () => {
             <h3 className="font-cyber text-white font-semibold mb-4">Navigation</h3>
             <ul className="space-y-2">
               <li><Link to="/" className="text-gray-400 hover:text-cyber-blue transition-colors">Home</Link></li>
+              <li><Link to="/news" className="text-gray-400 hover:text-cyber-blue transition-colors">News</Link></li>
               <li><Link to="/tools" className="text-gray-400 hover:text-cyber-blue transition-colors">Tools</Link></li>
               <li><Link to="/feedback" className="text-gray-400 hover:text-cyber-blue transition-colors">Feedback</Link></li>
             </ul>
