@@ -11,6 +11,7 @@ import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import TrendingThreats from '../components/TrendingThreats';
+import NewsSection from '../components/NewsSection';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -72,64 +73,6 @@ const Index = () => {
       link: '/tools/password-manager'
     }
   ];
-
-  const fetchNews = async () => {
-    setNewsLoading(true);
-    try {
-      const response = await fetch(
-        'https://newsapi.org/v2/top-headlines?country=us&apiKey=1b9b89b1e69a4fde9f7db452082f2676'
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch news');
-      }
-
-      const data = await response.json();
-      if (data.articles) {
-        setNews(data.articles.slice(0, 4));
-      }
-    } catch (error) {
-      console.error('Error fetching news:', error);
-      toast({
-        title: "Failed to load news",
-        description: "Using fallback data instead",
-        variant: "destructive",
-      });
-      
-      setNews([
-        {
-          title: "Global Tech Innovation Summit Highlights Future Trends",
-          description: "Leading experts discuss emerging technologies and their potential impact on various industries.",
-          url: "https://example.com/tech-news",
-          source: { name: "Global Tech Insights" },
-          publishedAt: new Date().toISOString()
-        },
-        {
-          title: "Sustainable Energy Breakthrough Announced",
-          description: "Researchers develop a new method of renewable energy production with unprecedented efficiency.",
-          url: "https://example.com/energy-news",
-          source: { name: "Science Today" },
-          publishedAt: new Date().toISOString()
-        },
-        {
-          title: "AI Revolutionizes Healthcare Diagnostics",
-          description: "Machine learning algorithms show remarkable accuracy in early disease detection.",
-          url: "https://example.com/health-news",
-          source: { name: "Medical Innovations" },
-          publishedAt: new Date().toISOString()
-        },
-        {
-          title: "Global Economic Outlook Shifts",
-          description: "Economists predict significant changes in international trade and investment landscapes.",
-          url: "https://example.com/economic-news",
-          source: { name: "Economic Review" },
-          publishedAt: new Date().toISOString()
-        }
-      ]);
-    } finally {
-      setNewsLoading(false);
-    }
-  };
 
   const fetchCybersecurityNews = async () => {
     setBlogLoading(true);
@@ -205,14 +148,9 @@ const Index = () => {
 
   useEffect(() => {
     fetchCybersecurityNews();
-    fetchNews();
     
     const newsRefreshInterval = setInterval(() => {
       fetchCybersecurityNews();
-    }, 1800000);
-    
-    const newsRefreshInterval2 = setInterval(() => {
-      fetchNews();
     }, 1800000);
 
     const terminalTimer = setTimeout(() => {
@@ -221,18 +159,9 @@ const Index = () => {
     
     return () => {
       clearInterval(newsRefreshInterval);
-      clearInterval(newsRefreshInterval2);
       clearTimeout(terminalTimer);
     };
   }, []);
-
-  const handleRefreshNews = () => {
-    fetchNews();
-    toast({
-      title: "Refreshing news",
-      description: "Fetching the latest headlines"
-    });
-  };
 
   const handleRefreshBlogs = () => {
     fetchCybersecurityNews();
@@ -337,81 +266,8 @@ const Index = () => {
           </div>
         </section>
       
-      <section className="py-16 bg-cyber-darkgray">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="font-cyber text-3xl font-bold">
-              <span className="neon-text-blue">Latest</span>{" "}
-              <span className="neon-text-pink">News</span>
-            </h2>
-            <button 
-              onClick={handleRefreshNews}
-              className="p-2 rounded-full border border-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all duration-200"
-              title="Refresh news"
-              disabled={newsLoading}
-            >
-              <RefreshCw className={`h-5 w-5 text-cyber-blue ${newsLoading ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
-          
-          {newsLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="cyber-loader"></div>
-              <span className="ml-3 text-cyber-blue">Loading latest news...</span>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {news.map((article, index) => (
-                <a 
-                  href={article.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  key={index}
-                  className="group"
-                >
-                  <Card className="h-full bg-cyber-gray border-cyber-darkgray hover:border-cyber-blue transition-all duration-300 overflow-hidden">
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start">
-                        <div className="px-3 py-1 text-xs rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue inline-block">
-                          {article.source?.name || "News"}
-                        </div>
-                        <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-cyber-blue transition-colors" />
-                      </div>
-                      <CardTitle className="mt-2 text-lg font-medium group-hover:text-cyber-blue transition-colors line-clamp-2">
-                        {article.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <CardDescription className="text-gray-400 line-clamp-3">
-                        {article.description || "No description available"}
-                      </CardDescription>
-                    </CardContent>
-                    <CardFooter className="flex items-center justify-between pt-2 border-t border-gray-800">
-                      <div className="flex items-center text-xs text-gray-500">
-                        <Globe2 className="h-3 w-3 mr-1" />
-                        {formatDate(article.publishedAt)}
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-cyber-blue" />
-                    </CardFooter>
-                  </Card>
-                </a>
-              ))}
-            </div>
-          )}
-          
-          <div className="mt-10 text-center">
-            <a 
-              href="https://news.google.com/" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cyber-button inline-flex items-center justify-center"
-            >
-              <Newspaper className="mr-2 h-5 w-5" />
-              View More News
-            </a>
-          </div>
-        </div>
-      </section>
+      {/* Using the standalone NewsSection component */}
+      <NewsSection />
 
       <section id="tools" className="py-16 bg-cyber-darkgray">
         <div className="container mx-auto px-4 md:px-6">
