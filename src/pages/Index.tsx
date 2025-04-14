@@ -253,7 +253,7 @@ const Index = () => {
                       />
                       
                       <TerminalText
-                        text="System secured. Welcome to CyberGuard."
+                        text="System secured. Welcome to Satvik's CyberGuard."
                         className="text-cyber-blue font-bold"
                         typingSpeed={30}
                         delay={3000}
@@ -265,150 +265,149 @@ const Index = () => {
             </div>
           </div>
         </section>
+        
+        <NewsSection />
       
-      {/* Using the standalone NewsSection component */}
-      <NewsSection />
-
-      <section id="tools" className="py-16 bg-cyber-darkgray">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-cyber text-3xl font-bold mb-4">
-              <span className="neon-text-blue">Security</span>{" "}
-              <span className="neon-text-pink">Tools</span>
-            </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              CyberGuard offers a comprehensive suite of cybersecurity tools to protect your digital identity and secure your online presence.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.map((tool) => (
-              <Link 
-                key={tool.id}
-                to={tool.link}
-                className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
-              >
-                <div className="flex items-center mb-4">
-                  {tool.icon}
-                  <h3 className="font-cyber text-xl font-semibold text-white">{tool.title}</h3>
-                </div>
-                <p className="text-gray-400 mb-4">
-                  {tool.description}
-                </p>
-                <div className={`flex justify-end text-cyber-${tool.color}`}>
-                  <ChevronRight className="h-5 w-5" />
-                </div>
-              </Link>
-            ))}
-          </div>
-          
-          <div className="mt-8 text-center">
-            <Link to="/tools" className="cyber-button inline-flex items-center justify-center">
-              <Wrench className="mr-2 h-5 w-5" />
-              View All Tools
-            </Link>
-          </div>
-        </div>
-      </section>
-      
-      <TrendingThreats />
-      
-      <section className="py-16 bg-cyber-darkgray">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16 flex items-center justify-center">
-            <h2 className="font-cyber text-3xl font-bold mb-0 mr-4">
-              <span className="neon-text-green">Cybersecurity</span>{" "}
-              <span className="neon-text-blue">News</span>
-            </h2>
-            <button 
-              onClick={handleRefreshBlogs}
-              className="p-2 rounded-full border border-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all duration-200"
-              title="Refresh news"
-              disabled={blogLoading}
-            >
-              <RefreshCw className={`h-5 w-5 text-cyber-blue ${blogLoading ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
-          
-          {blogLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="cyber-loader"></div>
-              <span className="ml-3 text-cyber-blue">Loading latest news...</span>
+        <section id="tools" className="py-16 bg-cyber-darkgray">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center mb-16">
+              <h2 className="font-cyber text-3xl font-bold mb-4">
+                <span className="neon-text-blue">Security</span>{" "}
+                <span className="neon-text-pink">Tools</span>
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto">
+                CyberGuard offers a comprehensive suite of cybersecurity tools to protect your digital identity and secure your online presence.
+              </p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {blogPosts.map(post => (
-                <a 
-                  key={post.id}
-                  href={post.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tools.map((tool) => (
+                <Link 
+                  key={tool.id}
+                  to={tool.link}
                   className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
                 >
-                  <div className="mb-4">
-                    <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue`}>
-                      {post.category}
-                    </span>
-                    <span className="ml-2 text-xs text-gray-500">{post.date}</span>
+                  <div className="flex items-center mb-4">
+                    {tool.icon}
+                    <h3 className="font-cyber text-xl font-semibold text-white">{tool.title}</h3>
                   </div>
-                  
-                  <h3 className="font-cyber text-xl font-medium mb-3 text-white group-hover:text-cyber-blue transition-colors">
-                    {post.title}
-                  </h3>
-                  
-                  <p className="text-gray-400 mb-4 line-clamp-3">
-                    {post.summary}
+                  <p className="text-gray-400 mb-4">
+                    {tool.description}
                   </p>
-                  
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
-                    <span className="text-sm text-gray-500">Source: {post.source}</span>
-                    <ChevronRight className="h-5 w-5 text-cyber-blue" />
+                  <div className={`flex justify-end text-cyber-${tool.color}`}>
+                    <ChevronRight className="h-5 w-5" />
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
-          )}
-          
-          <div className="mt-8 text-center">
-            <a 
-              href="https://www.darkreading.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cyber-button inline-flex items-center justify-center"
-            >
-              <FileText className="mr-2 h-5 w-5" />
-              Read More Articles
-            </a>
-          </div>
-        </div>
-      </section>
-      
-      <section className="py-20 bg-cyber-black relative overflow-hidden">
-        <div className="absolute inset-0 cyber-grid-bg opacity-5"></div>
-          
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="font-cyber text-3xl md:text-4xl font-bold mb-6">
-              <span className="neon-text-purple">Ready to secure</span>{" "}
-              <span className="neon-text-blue">your digital future?</span>
-            </h2>
             
-            <p className="text-gray-400 mb-8 text-lg">
-              Start using CyberGuard today and access our full suite of advanced cybersecurity tools.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Link to="/tools" className="cyber-button bg-cyber-purple text-white hover:text-white">
-                Explore All Tools
+            <div className="mt-8 text-center">
+              <Link to="/tools" className="cyber-button inline-flex items-center justify-center">
+                <Wrench className="mr-2 h-5 w-5" />
+                View All Tools
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+        
+        <TrendingThreats />
+        
+        <section className="py-16 bg-cyber-darkgray">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center mb-16 flex items-center justify-center">
+              <h2 className="font-cyber text-3xl font-bold mb-0 mr-4">
+                <span className="neon-text-green">Cybersecurity</span>{" "}
+                <span className="neon-text-blue">News</span>
+              </h2>
+              <button 
+                onClick={handleRefreshBlogs}
+                className="p-2 rounded-full border border-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all duration-200"
+                title="Refresh news"
+                disabled={blogLoading}
+              >
+                <RefreshCw className={`h-5 w-5 text-cyber-blue ${blogLoading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+            
+            {blogLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="cyber-loader"></div>
+                <span className="ml-3 text-cyber-blue">Loading latest news...</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {blogPosts.map(post => (
+                  <a 
+                    key={post.id}
+                    href={post.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
+                  >
+                    <div className="mb-4">
+                      <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue`}>
+                        {post.category}
+                      </span>
+                      <span className="ml-2 text-xs text-gray-500">{post.date}</span>
+                    </div>
+                    
+                    <h3 className="font-cyber text-xl font-medium mb-3 text-white group-hover:text-cyber-blue transition-colors">
+                      {post.title}
+                    </h3>
+                    
+                    <p className="text-gray-400 mb-4 line-clamp-3">
+                      {post.summary}
+                    </p>
+                    
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+                      <span className="text-sm text-gray-500">Source: {post.source}</span>
+                      <ChevronRight className="h-5 w-5 text-cyber-blue" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+            
+            <div className="mt-8 text-center">
+              <a 
+                href="https://www.darkreading.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cyber-button inline-flex items-center justify-center"
+              >
+                <FileText className="mr-2 h-5 w-5" />
+                Read More Articles
+              </a>
+            </div>
+          </div>
+        </section>
+        
+        <section className="py-20 bg-cyber-black relative overflow-hidden">
+          <div className="absolute inset-0 cyber-grid-bg opacity-5"></div>
+          
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="font-cyber text-3xl md:text-4xl font-bold mb-6">
+                <span className="neon-text-purple">Ready to secure</span>{" "}
+                <span className="neon-text-blue">your digital future?</span>
+              </h2>
+              
+              <p className="text-gray-400 mb-8 text-lg">
+                Start using CyberGuard today and access our full suite of advanced cybersecurity tools.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <Link to="/tools" className="cyber-button bg-cyber-purple text-white hover:text-white">
+                  Explore All Tools
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
       
-    <Footer />
-  </div>
+      <Footer />
+    </div>
   );
 };
 

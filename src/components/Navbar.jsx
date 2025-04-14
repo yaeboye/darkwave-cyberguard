@@ -16,7 +16,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <Shield className="h-8 w-8 text-cyber-blue animate-glow-pulse" />
-            <span className="font-cyber font-bold text-xl neon-text-blue">CYBER<span className="neon-text-pink">GUARD</span></span>
+            <span className="font-cyber font-bold text-xl neon-text-blue">Satvik's<span className="neon-text-pink">CyberGuard</span></span>
           </Link>
 
           {/* Desktop Navigation */}
