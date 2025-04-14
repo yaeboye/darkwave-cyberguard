@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -11,6 +10,7 @@ import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import TrendingThreats from '../components/TrendingThreats';
+import NewsSection from '../components/NewsSection';
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -308,6 +308,9 @@ const Index = () => {
         
         {/* Trending Threats Section */}
         <TrendingThreats />
+        
+        {/* News Section */}
+        <NewsSection />
         
         {/* Blog Posts Section */}
         <section className="py-16 bg-cyber-darkgray">
