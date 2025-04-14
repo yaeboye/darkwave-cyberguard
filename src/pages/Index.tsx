@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Shield, Lock, FileText, AlertTriangle, Wrench, ChevronRight, Key, 
-  Hash, Database, Globe, Search, QrCode, RefreshCw, ExternalLink, Globe2
+  Hash, Database, Globe, Search, QrCode, RefreshCw, ExternalLink, Globe2,
+  Newspaper
 } from 'lucide-react';
 import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
@@ -75,7 +76,6 @@ const Index = () => {
   const fetchNews = async () => {
     setNewsLoading(true);
     try {
-      // Using NewsAPI for general news
       const response = await fetch(
         'https://newsapi.org/v2/top-headlines?country=us&apiKey=1b9b89b1e69a4fde9f7db452082f2676'
       );
@@ -96,7 +96,6 @@ const Index = () => {
         variant: "destructive",
       });
       
-      // Fallback to static data if API fails
       setNews([
         {
           title: "Global Tech Innovation Summit Highlights Future Trends",
@@ -132,12 +131,9 @@ const Index = () => {
     }
   };
 
-  // Fetch real cybersecurity news from API
   const fetchCybersecurityNews = async () => {
     setBlogLoading(true);
     try {
-      // Using Gnews API for cybersecurity news
-      // For demo purposes - in production, use your own API key
       const response = await fetch(
         'https://gnews.io/api/v4/search?q=cybersecurity&token=9cf3654c4fdea3c02b7025cb25c95b8f&lang=en&max=3'
       );
@@ -173,7 +169,6 @@ const Index = () => {
         variant: "destructive",
       });
       
-      // Fallback to static data if API fails
       setBlogPosts([
         {
           id: 1,
@@ -212,22 +207,18 @@ const Index = () => {
     fetchCybersecurityNews();
     fetchNews();
     
-    // Refresh news every 30 minutes (1800000 ms)
     const newsRefreshInterval = setInterval(() => {
       fetchCybersecurityNews();
     }, 1800000);
     
-    // Setup news refresh interval (every 30 minutes)
     const newsRefreshInterval2 = setInterval(() => {
       fetchNews();
     }, 1800000);
 
-    // Terminal text effect timer
     const terminalTimer = setTimeout(() => {
       setShowTerminalText(true);
     }, 500);
     
-    // Clean up intervals and timers
     return () => {
       clearInterval(newsRefreshInterval);
       clearInterval(newsRefreshInterval2);
@@ -243,7 +234,6 @@ const Index = () => {
     });
   };
 
-  // Function to manually refresh blogs
   const handleRefreshBlogs = () => {
     fetchCybersecurityNews();
     toast({
@@ -267,7 +257,6 @@ const Index = () => {
       <Navbar />
       
       <main className="flex-grow">
-        {/* Hero Section */}
         <section className="relative py-20 overflow-hidden bg-cyber-black">
           <div className="absolute inset-0 cyber-grid-bg opacity-10"></div>
           
@@ -348,7 +337,6 @@ const Index = () => {
           </div>
         </section>
       
-      {/* New News Section */}
       <section className="py-16 bg-cyber-darkgray">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between mb-12">
@@ -425,7 +413,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Tools Section */}
       <section id="tools" className="py-16 bg-cyber-darkgray">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
@@ -468,13 +455,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Trending Threats Section */}
       <TrendingThreats />
       
-      {/* News Section */}
-      {/* <NewsSection /> */}
-      
-      {/* Blog Posts Section */}
       <section className="py-16 bg-cyber-darkgray">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16 flex items-center justify-center">
@@ -545,7 +527,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* CTA Section */}
       <section className="py-20 bg-cyber-black relative overflow-hidden">
         <div className="absolute inset-0 cyber-grid-bg opacity-5"></div>
           
