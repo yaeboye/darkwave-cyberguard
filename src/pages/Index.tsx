@@ -3,21 +3,23 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Shield, Lock, FileText, AlertTriangle, Wrench, ChevronRight, Key, 
-  Hash, Database, Globe, Search, QrCode, RefreshCw
+  Hash, Database, Globe, Search, QrCode, RefreshCw, ExternalLink, Globe2
 } from 'lucide-react';
 import GlitchText from '../components/GlitchText';
 import TerminalText from '../components/TerminalText';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import TrendingThreats from '../components/TrendingThreats';
-import NewsSection from '../components/NewsSection';
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Index = () => {
   const { toast } = useToast();
   const [showTerminalText, setShowTerminalText] = useState(false);
   const [blogPosts, setBlogPosts] = useState([]);
   const [blogLoading, setBlogLoading] = useState(true);
+  const [news, setNews] = useState<any[]>([]);
+  const [newsLoading, setNewsLoading] = useState(true);
 
   const tools = [
     {
@@ -69,6 +71,66 @@ const Index = () => {
       link: '/tools/password-manager'
     }
   ];
+
+  const fetchNews = async () => {
+    setNewsLoading(true);
+    try {
+      // Using NewsAPI for general news
+      const response = await fetch(
+        'https://newsapi.org/v2/top-headlines?country=us&apiKey=1b9b89b1e69a4fde9f7db452082f2676'
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch news');
+      }
+
+      const data = await response.json();
+      if (data.articles) {
+        setNews(data.articles.slice(0, 4));
+      }
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      toast({
+        title: "Failed to load news",
+        description: "Using fallback data instead",
+        variant: "destructive",
+      });
+      
+      // Fallback to static data if API fails
+      setNews([
+        {
+          title: "Global Tech Innovation Summit Highlights Future Trends",
+          description: "Leading experts discuss emerging technologies and their potential impact on various industries.",
+          url: "https://example.com/tech-news",
+          source: { name: "Global Tech Insights" },
+          publishedAt: new Date().toISOString()
+        },
+        {
+          title: "Sustainable Energy Breakthrough Announced",
+          description: "Researchers develop a new method of renewable energy production with unprecedented efficiency.",
+          url: "https://example.com/energy-news",
+          source: { name: "Science Today" },
+          publishedAt: new Date().toISOString()
+        },
+        {
+          title: "AI Revolutionizes Healthcare Diagnostics",
+          description: "Machine learning algorithms show remarkable accuracy in early disease detection.",
+          url: "https://example.com/health-news",
+          source: { name: "Medical Innovations" },
+          publishedAt: new Date().toISOString()
+        },
+        {
+          title: "Global Economic Outlook Shifts",
+          description: "Economists predict significant changes in international trade and investment landscapes.",
+          url: "https://example.com/economic-news",
+          source: { name: "Economic Review" },
+          publishedAt: new Date().toISOString()
+        }
+      ]);
+    } finally {
+      setNewsLoading(false);
+    }
+  };
 
   // Fetch real cybersecurity news from API
   const fetchCybersecurityNews = async () => {
@@ -146,15 +208,20 @@ const Index = () => {
     }
   };
 
-  // Fetch news on component mount and set an interval for refreshing
   useEffect(() => {
     fetchCybersecurityNews();
+    fetchNews();
     
     // Refresh news every 30 minutes (1800000 ms)
     const newsRefreshInterval = setInterval(() => {
       fetchCybersecurityNews();
     }, 1800000);
     
+    // Setup news refresh interval (every 30 minutes)
+    const newsRefreshInterval2 = setInterval(() => {
+      fetchNews();
+    }, 1800000);
+
     // Terminal text effect timer
     const terminalTimer = setTimeout(() => {
       setShowTerminalText(true);
@@ -163,9 +230,18 @@ const Index = () => {
     // Clean up intervals and timers
     return () => {
       clearInterval(newsRefreshInterval);
+      clearInterval(newsRefreshInterval2);
       clearTimeout(terminalTimer);
     };
   }, []);
+
+  const handleRefreshNews = () => {
+    fetchNews();
+    toast({
+      title: "Refreshing news",
+      description: "Fetching the latest headlines"
+    });
+  };
 
   // Function to manually refresh blogs
   const handleRefreshBlogs = () => {
@@ -173,6 +249,15 @@ const Index = () => {
     toast({
       title: "Refreshing news",
       description: "Getting the latest cybersecurity updates"
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -262,154 +347,231 @@ const Index = () => {
             </div>
           </div>
         </section>
-        
-        {/* Tools Section */}
-        <section id="tools" className="py-16 bg-cyber-darkgray">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-16">
-              <h2 className="font-cyber text-3xl font-bold mb-4">
-                <span className="neon-text-blue">Security</span>{" "}
-                <span className="neon-text-pink">Tools</span>
-              </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
-                CyberGuard offers a comprehensive suite of cybersecurity tools to protect your digital identity and secure your online presence.
-              </p>
+      
+      {/* New News Section */}
+      <section className="py-16 bg-cyber-darkgray">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="font-cyber text-3xl font-bold">
+              <span className="neon-text-blue">Latest</span>{" "}
+              <span className="neon-text-pink">News</span>
+            </h2>
+            <button 
+              onClick={handleRefreshNews}
+              className="p-2 rounded-full border border-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all duration-200"
+              title="Refresh news"
+              disabled={newsLoading}
+            >
+              <RefreshCw className={`h-5 w-5 text-cyber-blue ${newsLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+          
+          {newsLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="cyber-loader"></div>
+              <span className="ml-3 text-cyber-blue">Loading latest news...</span>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tools.map((tool) => (
-                <Link 
-                  key={tool.id}
-                  to={tool.link}
-                  className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {news.map((article, index) => (
+                <a 
+                  href={article.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  key={index}
+                  className="group"
                 >
-                  <div className="flex items-center mb-4">
-                    {tool.icon}
-                    <h3 className="font-cyber text-xl font-semibold text-white">{tool.title}</h3>
-                  </div>
-                  <p className="text-gray-400 mb-4">
-                    {tool.description}
-                  </p>
-                  <div className={`flex justify-end text-cyber-${tool.color}`}>
-                    <ChevronRight className="h-5 w-5" />
-                  </div>
-                </Link>
+                  <Card className="h-full bg-cyber-gray border-cyber-darkgray hover:border-cyber-blue transition-all duration-300 overflow-hidden">
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <div className="px-3 py-1 text-xs rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue inline-block">
+                          {article.source?.name || "News"}
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-cyber-blue transition-colors" />
+                      </div>
+                      <CardTitle className="mt-2 text-lg font-medium group-hover:text-cyber-blue transition-colors line-clamp-2">
+                        {article.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <CardDescription className="text-gray-400 line-clamp-3">
+                        {article.description || "No description available"}
+                      </CardDescription>
+                    </CardContent>
+                    <CardFooter className="flex items-center justify-between pt-2 border-t border-gray-800">
+                      <div className="flex items-center text-xs text-gray-500">
+                        <Globe2 className="h-3 w-3 mr-1" />
+                        {formatDate(article.publishedAt)}
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-cyber-blue" />
+                    </CardFooter>
+                  </Card>
+                </a>
               ))}
             </div>
+          )}
+          
+          <div className="mt-10 text-center">
+            <a 
+              href="https://news.google.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cyber-button inline-flex items-center justify-center"
+            >
+              <Newspaper className="mr-2 h-5 w-5" />
+              View More News
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Tools Section */}
+      <section id="tools" className="py-16 bg-cyber-darkgray">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-16">
+            <h2 className="font-cyber text-3xl font-bold mb-4">
+              <span className="neon-text-blue">Security</span>{" "}
+              <span className="neon-text-pink">Tools</span>
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              CyberGuard offers a comprehensive suite of cybersecurity tools to protect your digital identity and secure your online presence.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tools.map((tool) => (
+              <Link 
+                key={tool.id}
+                to={tool.link}
+                className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
+              >
+                <div className="flex items-center mb-4">
+                  {tool.icon}
+                  <h3 className="font-cyber text-xl font-semibold text-white">{tool.title}</h3>
+                </div>
+                <p className="text-gray-400 mb-4">
+                  {tool.description}
+                </p>
+                <div className={`flex justify-end text-cyber-${tool.color}`}>
+                  <ChevronRight className="h-5 w-5" />
+                </div>
+              </Link>
+            ))}
+          </div>
+          
+          <div className="mt-8 text-center">
+            <Link to="/tools" className="cyber-button inline-flex items-center justify-center">
+              <Wrench className="mr-2 h-5 w-5" />
+              View All Tools
+            </Link>
+          </div>
+        </div>
+      </section>
+      
+      {/* Trending Threats Section */}
+      <TrendingThreats />
+      
+      {/* News Section */}
+      {/* <NewsSection /> */}
+      
+      {/* Blog Posts Section */}
+      <section className="py-16 bg-cyber-darkgray">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-16 flex items-center justify-center">
+            <h2 className="font-cyber text-3xl font-bold mb-0 mr-4">
+              <span className="neon-text-green">Cybersecurity</span>{" "}
+              <span className="neon-text-blue">News</span>
+            </h2>
+            <button 
+              onClick={handleRefreshBlogs}
+              className="p-2 rounded-full border border-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all duration-200"
+              title="Refresh news"
+              disabled={blogLoading}
+            >
+              <RefreshCw className={`h-5 w-5 text-cyber-blue ${blogLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+          
+          {blogLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="cyber-loader"></div>
+              <span className="ml-3 text-cyber-blue">Loading latest news...</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {blogPosts.map(post => (
+                <a 
+                  key={post.id}
+                  href={post.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
+                >
+                  <div className="mb-4">
+                    <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue`}>
+                      {post.category}
+                    </span>
+                    <span className="ml-2 text-xs text-gray-500">{post.date}</span>
+                  </div>
+                  
+                  <h3 className="font-cyber text-xl font-medium mb-3 text-white group-hover:text-cyber-blue transition-colors">
+                    {post.title}
+                  </h3>
+                  
+                  <p className="text-gray-400 mb-4 line-clamp-3">
+                    {post.summary}
+                  </p>
+                  
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+                    <span className="text-sm text-gray-500">Source: {post.source}</span>
+                    <ChevronRight className="h-5 w-5 text-cyber-blue" />
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+          
+          <div className="mt-8 text-center">
+            <a 
+              href="https://www.darkreading.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cyber-button inline-flex items-center justify-center"
+            >
+              <FileText className="mr-2 h-5 w-5" />
+              Read More Articles
+            </a>
+          </div>
+        </div>
+      </section>
+      
+      {/* CTA Section */}
+      <section className="py-20 bg-cyber-black relative overflow-hidden">
+        <div className="absolute inset-0 cyber-grid-bg opacity-5"></div>
+          
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="font-cyber text-3xl md:text-4xl font-bold mb-6">
+              <span className="neon-text-purple">Ready to secure</span>{" "}
+              <span className="neon-text-blue">your digital future?</span>
+            </h2>
             
-            <div className="mt-8 text-center">
-              <Link to="/tools" className="cyber-button inline-flex items-center justify-center">
-                <Wrench className="mr-2 h-5 w-5" />
-                View All Tools
+            <p className="text-gray-400 mb-8 text-lg">
+              Start using CyberGuard today and access our full suite of advanced cybersecurity tools.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Link to="/tools" className="cyber-button bg-cyber-purple text-white hover:text-white">
+                Explore All Tools
               </Link>
             </div>
           </div>
-        </section>
-        
-        {/* Trending Threats Section */}
-        <TrendingThreats />
-        
-        {/* News Section */}
-        <NewsSection />
-        
-        {/* Blog Posts Section */}
-        <section className="py-16 bg-cyber-darkgray">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-16 flex items-center justify-center">
-              <h2 className="font-cyber text-3xl font-bold mb-0 mr-4">
-                <span className="neon-text-green">Cybersecurity</span>{" "}
-                <span className="neon-text-blue">News</span>
-              </h2>
-              <button 
-                onClick={handleRefreshBlogs}
-                className="p-2 rounded-full border border-cyber-blue hover:bg-cyber-blue hover:bg-opacity-20 transition-all duration-200"
-                title="Refresh news"
-                disabled={blogLoading}
-              >
-                <RefreshCw className={`h-5 w-5 text-cyber-blue ${blogLoading ? 'animate-spin' : ''}`} />
-              </button>
-            </div>
-            
-            {blogLoading ? (
-              <div className="flex justify-center items-center py-12">
-                <div className="cyber-loader"></div>
-                <span className="ml-3 text-cyber-blue">Loading latest news...</span>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {blogPosts.map(post => (
-                  <a 
-                    key={post.id}
-                    href={post.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cyber-card group transition-all duration-300 hover:transform hover:scale-[1.02]"
-                  >
-                    <div className="mb-4">
-                      <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full bg-cyber-blue bg-opacity-20 text-cyber-blue`}>
-                        {post.category}
-                      </span>
-                      <span className="ml-2 text-xs text-gray-500">{post.date}</span>
-                    </div>
-                    
-                    <h3 className="font-cyber text-xl font-medium mb-3 text-white group-hover:text-cyber-blue transition-colors">
-                      {post.title}
-                    </h3>
-                    
-                    <p className="text-gray-400 mb-4 line-clamp-3">
-                      {post.summary}
-                    </p>
-                    
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
-                      <span className="text-sm text-gray-500">Source: {post.source}</span>
-                      <ChevronRight className="h-5 w-5 text-cyber-blue" />
-                    </div>
-                  </a>
-                ))}
-              </div>
-            )}
-            
-            <div className="mt-8 text-center">
-              <a 
-                href="https://www.darkreading.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cyber-button inline-flex items-center justify-center"
-              >
-                <FileText className="mr-2 h-5 w-5" />
-                Read More Articles
-              </a>
-            </div>
-          </div>
-        </section>
-        
-        {/* CTA Section */}
-        <section className="py-20 bg-cyber-black relative overflow-hidden">
-          <div className="absolute inset-0 cyber-grid-bg opacity-5"></div>
-          
-          <div className="container mx-auto px-4 md:px-6 relative z-10">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="font-cyber text-3xl md:text-4xl font-bold mb-6">
-                <span className="neon-text-purple">Ready to secure</span>{" "}
-                <span className="neon-text-blue">your digital future?</span>
-              </h2>
-              
-              <p className="text-gray-400 mb-8 text-lg">
-                Start using CyberGuard today and access our full suite of advanced cybersecurity tools.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <Link to="/tools" className="cyber-button bg-cyber-purple text-white hover:text-white">
-                  Explore All Tools
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+        </div>
+      </section>
+    </main>
       
-      <Footer />
-    </div>
+    <Footer />
+  </div>
   );
 };
 
