@@ -13,10 +13,9 @@ const NewsSection = () => {
   const fetchNews = async () => {
     setLoading(true);
     try {
-      // Using NewsAPI for the latest news
-      // Replace with your actual News API key
+      // Using NewsAPI for the latest news with the provided API key
       const response = await fetch(
-        'https://newsapi.org/v2/top-headlines?country=us&category=technology&apiKey=1b9b89b1e69a4fde9f7db452082f2676'
+        'https://newsapi.org/v2/top-headlines?country=us&category=technology&apiKey=a0d97574f94c49b1b9d6fccf82a6b824'
       );
 
       if (!response.ok) {
@@ -195,3 +194,4 @@ const NewsSection = () => {
 };
 
 export default NewsSection;
+

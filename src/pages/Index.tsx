@@ -79,7 +79,7 @@ const Index = () => {
     setBlogLoading(true);
     try {
       const response = await fetch(
-        'https://newsapi.org/v2/everything?q=cybersecurity&sortBy=publishedAt&apiKey=1b9b89b1e69a4fde9f7db452082f2676&pageSize=3'
+        'https://newsapi.org/v2/everything?q=cybersecurity&sortBy=publishedAt&apiKey=a0d97574f94c49b1b9d6fccf82a6b824&pageSize=3'
       );
       
       if (!response.ok) {
@@ -414,3 +414,4 @@ const Index = () => {
 };
 
 export default Index;
+
