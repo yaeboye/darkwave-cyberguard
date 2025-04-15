@@ -140,7 +140,19 @@ const PasswordManager = () => {
     }
     
     try {
-      // Insert the password into Supabase
+      // Get the current user's ID from Supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to save passwords",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Insert the password into Supabase using the authenticated user's ID
       const { data, error } = await supabase
         .from('stored_passwords')
         .insert({
@@ -149,7 +161,7 @@ const PasswordManager = () => {
           password: newPassword.password,
           notes: newPassword.notes || null,
           url: newPassword.url || null,
-          user_id: 'demo-user' // In a real app, this would be the authenticated user's ID
+          user_id: user.id // Use the actual authenticated user's ID
         })
         .select();
         
@@ -184,16 +196,6 @@ const PasswordManager = () => {
         description: error.message || "Failed to save password",
         variant: "destructive",
       });
-      
-      // Fallback to local state if database fails
-      const newId = Math.random().toString(36).substring(2, 11);
-      const passwordEntry: Password = {
-        id: newId,
-        ...newPassword,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-      setPasswords(prev => [passwordEntry, ...prev]);
     }
   };
   
