@@ -14,8 +14,9 @@ const NewsSection = () => {
     setLoading(true);
     try {
       // Using NewsAPI for the latest news
+      // Replace with your actual News API key
       const response = await fetch(
-        'https://newsapi.org/v2/top-headlines?country=us&apiKey=1b9b89b1e69a4fde9f7db452082f2676'
+        'https://newsapi.org/v2/top-headlines?country=us&category=technology&apiKey=1b9b89b1e69a4fde9f7db452082f2676'
       );
 
       if (!response.ok) {
@@ -37,46 +38,46 @@ const NewsSection = () => {
       // Fallback to static data if API fails
       setNews([
         {
-          title: "Global Tech Giants Announce New Partnership",
-          description: "Leading technology companies form alliance to address industry challenges and innovations.",
+          title: "Cybersecurity Threats on the Rise in 2025",
+          description: "Security researchers report an alarming increase in sophisticated phishing and ransomware attacks targeting remote workers.",
           publishedAt: new Date().toISOString(),
-          url: "https://example.com/tech-news",
-          source: { name: "Tech Daily" }
+          url: "https://cybersecurity-news.com/threats-2025",
+          source: { name: "Cybersecurity Today" }
         },
         {
-          title: "Innovative Renewable Energy Solution Unveiled",
-          description: "Scientists develop breakthrough technology that could revolutionize how we harness solar power.",
+          title: "New Zero-Day Vulnerability Discovered in Popular Software",
+          description: "Security teams are racing to patch a critical vulnerability that could allow attackers to gain system-level access.",
           publishedAt: new Date().toISOString(),
-          url: "https://example.com/energy-news",
-          source: { name: "Science Today" }
+          url: "https://tech-security.com/zero-day-alert",
+          source: { name: "Tech Security" }
         },
         {
-          title: "New Study Reveals Health Benefits of Mediterranean Diet",
-          description: "Research confirms significant improvements in longevity and reduced risk of chronic diseases.",
+          title: "Government Releases New Cybersecurity Framework",
+          description: "The framework includes updated guidelines for organizations to protect against evolving cyber threats.",
           publishedAt: new Date().toISOString(),
-          url: "https://example.com/health-news",
-          source: { name: "Health Journal" }
+          url: "https://policy-watch.com/cyber-framework",
+          source: { name: "Policy Watch" }
         },
         {
-          title: "Global Economic Forum Addresses Climate Change",
-          description: "World leaders gather to discuss economic policies aimed at reducing carbon emissions.",
+          title: "AI-Powered Security Tools Show Promise in Threat Detection",
+          description: "New research demonstrates how artificial intelligence can identify unusual patterns and potential security breaches faster than traditional methods.",
           publishedAt: new Date().toISOString(),
-          url: "https://example.com/economic-news",
-          source: { name: "Economic Times" }
+          url: "https://ai-security.com/research",
+          source: { name: "AI Security" }
         },
         {
-          title: "Advancements in Artificial Intelligence Research",
-          description: "New AI models demonstrate unprecedented capabilities in problem-solving and language understanding.",
+          title: "Major Data Breach Affects Millions of Users",
+          description: "Companies urged to strengthen security protocols after hackers access sensitive customer information through a third-party vendor.",
           publishedAt: new Date().toISOString(),
-          url: "https://example.com/ai-news",
-          source: { name: "Tech Insider" }
+          url: "https://data-breach-alerts.com/latest",
+          source: { name: "Data Breach Alerts" }
         },
         {
-          title: "Space Exploration Mission Discovers New Exoplanets",
-          description: "Astronomers identify potentially habitable planets outside our solar system.",
+          title: "Advanced Encryption Standard Updates Coming Next Year",
+          description: "Cryptography experts are finalizing the next generation of encryption protocols designed to resist quantum computing attacks.",
           publishedAt: new Date().toISOString(),
-          url: "https://example.com/space-news",
-          source: { name: "Space Observatory" }
+          url: "https://encryption-today.com/aes-next-gen",
+          source: { name: "Encryption Today" }
         }
       ]);
     } finally {
