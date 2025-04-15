@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import CyberHeader from '@/components/CyberHeader';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const { toast } = useToast();
@@ -28,18 +29,36 @@ const Contact = () => {
     
     setIsSubmitting(true);
     
-    // Simulate sending the message
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Message Sent",
-      description: "Thank you for contacting me! I'll get back to you soon.",
-    });
-    
-    setName('');
-    setEmail('');
-    setMessage('');
-    setIsSubmitting(false);
+    try {
+      // Store the feedback/message in Supabase
+      const { error } = await supabase
+        .from('feedback')
+        .insert({
+          type: 'contact',
+          content: message,
+          status: 'pending'
+        });
+        
+      if (error) throw error;
+      
+      toast({
+        title: "Message Sent",
+        description: "Thank you for contacting me! I'll get back to you soon.",
+      });
+      
+      setName('');
+      setEmail('');
+      setMessage('');
+    } catch (error: any) {
+      console.error("Error sending message:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
