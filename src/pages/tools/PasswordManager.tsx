@@ -99,13 +99,13 @@ const PasswordManager = () => {
         
       if (error) {
         console.error("Error fetching passwords:", error);
-        setPasswords(demoPasswords);
+        setPasswords([]);
       } else {
         setPasswords(data || []);
       }
     } catch (error) {
       console.error("Exception fetching passwords:", error);
-      setPasswords(demoPasswords);
+      setPasswords([]);
     } finally {
       setLoading(false);
     }
@@ -137,7 +137,6 @@ const PasswordManager = () => {
   const addPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
     if (!newPassword.site_name || !newPassword.username || !newPassword.password) {
       toast({
         title: "Error",
@@ -155,9 +154,10 @@ const PasswordManager = () => {
       });
       return;
     }
+
+    console.log("Adding password for user:", user.id);
     
     try {
-      // Insert the password into Supabase using the authenticated user's ID
       const { data, error } = await supabase
         .from('stored_passwords')
         .insert({
@@ -174,26 +174,24 @@ const PasswordManager = () => {
         throw error;
       }
       
-      // Add to local state if successful
       if (data && data.length > 0) {
         setPasswords(prev => [data[0], ...prev]);
+        
+        setNewPassword({
+          site_name: '',
+          username: '',
+          password: '',
+          notes: '',
+          url: ''
+        });
+        
+        setShowAddForm(false);
+        
+        toast({
+          title: "Success",
+          description: "Password saved successfully",
+        });
       }
-      
-      // Reset form
-      setNewPassword({
-        site_name: '',
-        username: '',
-        password: '',
-        notes: '',
-        url: ''
-      });
-      
-      setShowAddForm(false);
-      
-      toast({
-        title: "Success",
-        description: "Password saved successfully",
-      });
     } catch (error: any) {
       console.error("Error adding password:", error);
       toast({
@@ -233,7 +231,6 @@ const PasswordManager = () => {
         throw error;
       }
       
-      // Update the modified_at date locally
       setPasswords(prev => 
         prev.map(password => 
           password.id === id ? { ...password, updated_at: new Date().toISOString() } : password
@@ -254,7 +251,6 @@ const PasswordManager = () => {
         variant: "destructive",
       });
       
-      // Still update the local state for demo purposes
       setPasswords(prev => 
         prev.map(password => 
           password.id === id ? { ...password, updated_at: new Date().toISOString() } : password
@@ -289,7 +285,6 @@ const PasswordManager = () => {
         variant: "destructive",
       });
       
-      // Still update the local state for demo purposes
       setPasswords(prev => prev.filter(password => password.id !== id));
     }
   };
