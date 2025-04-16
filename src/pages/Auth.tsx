@@ -86,6 +86,32 @@ const Auth = () => {
     return true;
   };
 
+  const handleResendConfirmation = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Confirmation Email Sent",
+        description: "Please check your inbox for the confirmation link.",
+      });
+    } catch (error) {
+      console.error('Error sending confirmation email:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to resend confirmation email.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAuth = async (e) => {
     e.preventDefault();
     
@@ -101,7 +127,34 @@ const Auth = () => {
           password,
         });
         
-        if (error) throw error;
+        if (error) {
+          if (error.message === "Email not confirmed") {
+            toast({
+              title: "Email Not Confirmed",
+              description: "Please check your email for the confirmation link or request a new one.",
+              variant: "destructive",
+            });
+            
+            // Show resend confirmation option
+            setTimeout(() => {
+              toast({
+                title: "Need confirmation email?",
+                description: "You can request a new confirmation email.",
+                action: (
+                  <button 
+                    onClick={handleResendConfirmation}
+                    className="bg-cyber-blue hover:bg-cyber-purple text-white px-2 py-1 rounded"
+                  >
+                    Resend
+                  </button>
+                ),
+              });
+            }, 500);
+            
+            return;
+          }
+          throw error;
+        }
         
         if (data.user) {
           toast({
