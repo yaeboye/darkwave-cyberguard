@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Shield, Monitor, Cpu, Terminal, FileText, Wrench, MessageSquare, Newspaper } from 'lucide-react';
+import { Menu, X, Shield, Monitor, Wrench, FileText, MessageSquare, Newspaper, LogIn, User, LogOut } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -33,14 +35,32 @@ const Navbar = () => {
               <Wrench className="mr-1 h-4 w-4" />
               <span>Tools</span>
             </Link>
-            <Link to="/guides" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
-              <FileText className="mr-1 h-4 w-4" />
-              <span>Guides</span>
-            </Link>
             <Link to="/feedback" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
               <MessageSquare className="mr-1 h-4 w-4" />
               <span>Feedback</span>
             </Link>
+            
+            {/* Authentication Links */}
+            {user ? (
+              <>
+                <Link to="/tools/password-manager" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
+                  <User className="mr-1 h-4 w-4" />
+                  <span>My Vault</span>
+                </Link>
+                <button 
+                  onClick={signOut} 
+                  className="font-cyber text-cyber-red hover:text-cyber-blue transition-colors flex items-center"
+                >
+                  <LogOut className="mr-1 h-4 w-4" />
+                  <span>Logout</span>
+                </button>
+              </>
+            ) : (
+              <Link to="/auth" className="font-cyber text-white hover:text-cyber-blue transition-colors flex items-center">
+                <LogIn className="mr-1 h-4 w-4" />
+                <span>Login/Register</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -84,14 +104,6 @@ const Navbar = () => {
               <span>Tools</span>
             </Link>
             <Link 
-              to="/guides" 
-              className="block font-cyber py-2 px-4 text-white hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
-              onClick={toggleMenu}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              <span>Guides</span>
-            </Link>
-            <Link 
               to="/feedback" 
               className="block font-cyber py-2 px-4 text-white hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
               onClick={toggleMenu}
@@ -99,6 +111,39 @@ const Navbar = () => {
               <MessageSquare className="mr-2 h-4 w-4" />
               <span>Feedback</span>
             </Link>
+            
+            {/* Mobile Authentication Links */}
+            {user ? (
+              <>
+                <Link 
+                  to="/tools/password-manager" 
+                  className="block font-cyber py-2 px-4 text-white hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
+                  onClick={toggleMenu}
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  <span>My Vault</span>
+                </Link>
+                <button 
+                  onClick={() => {
+                    signOut();
+                    toggleMenu();
+                  }}
+                  className="block w-full text-left font-cyber py-2 px-4 text-cyber-red hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </button>
+              </>
+            ) : (
+              <Link 
+                to="/auth" 
+                className="block font-cyber py-2 px-4 text-white hover:bg-cyber-blue hover:bg-opacity-20 transition-all flex items-center"
+                onClick={toggleMenu}
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                <span>Login/Register</span>
+              </Link>
+            )}
           </div>
         </div>
       )}
