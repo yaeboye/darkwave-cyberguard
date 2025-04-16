@@ -22,13 +22,15 @@ const Auth = () => {
 
   // Check if user is already authenticated
   useEffect(() => {
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user || null);
+    };
+    
+    checkUser();
+    
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event, session);
-      setUser(session?.user || null);
-    });
-
-    // Get current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user || null);
     });
 
@@ -94,35 +96,48 @@ const Auth = () => {
     try {
       if (isLogin) {
         // Login
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         
         if (error) throw error;
         
-        toast({
-          title: "Login Successful",
-          description: "Welcome back to CyberGuard!",
-        });
-        
-        navigate('/');
+        if (data.user) {
+          toast({
+            title: "Login Successful",
+            description: "Welcome back to CyberGuard!",
+          });
+          
+          navigate('/');
+        }
       } else {
         // Register
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
         });
         
         if (error) throw error;
         
-        toast({
-          title: "Registration Successful",
-          description: "Please check your email to confirm your account.",
-        });
-        
-        // Auto-switch to login form
-        setIsLogin(true);
+        if (data.user) {
+          if (data.session) {
+            // User was immediately signed in
+            toast({
+              title: "Registration Successful",
+              description: "Welcome to CyberGuard!",
+            });
+            navigate('/');
+          } else {
+            // Email confirmation is required
+            toast({
+              title: "Registration Successful",
+              description: "Please check your email to confirm your account.",
+            });
+            // Auto-switch to login form
+            setIsLogin(true);
+          }
+        }
       }
     } catch (error) {
       console.error('Authentication error:', error);
