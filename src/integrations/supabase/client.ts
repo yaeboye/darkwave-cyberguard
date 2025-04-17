@@ -26,3 +26,17 @@ export const supabase = createClient<Database>(
     },
   }
 );
+
+// Create a function to handle user profile creation after registration
+export const createUserProfile = async (userId: string, email: string) => {
+  const { error } = await supabase
+    .from('profiles')
+    .insert([{ id: userId, username: email }]);
+  
+  if (error) {
+    console.error('Error creating user profile:', error);
+    return false;
+  }
+  
+  return true;
+};

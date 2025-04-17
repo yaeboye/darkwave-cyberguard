@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log('Initial session check:', currentSession);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setLoading(false);

@@ -3,12 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, LogIn, UserPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, createUserProfile } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CyberHeader from '@/components/CyberHeader';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,30 +17,9 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  // Check if user is already authenticated
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getSession();
-      setUser(data.session?.user || null);
-    };
-    
-    checkUser();
-    
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session);
-      setUser(session?.user || null);
-    });
-
-    return () => {
-      if (authListener && authListener.subscription) {
-        authListener.subscription.unsubscribe();
-      }
-    };
-  }, []);
+  const { user } = useAuth();
 
   // Redirect to home if already logged in
   if (user) {
@@ -128,7 +108,7 @@ const Auth = () => {
         });
         
         if (error) {
-          if (error.message === "Email not confirmed") {
+          if (error.message.includes("Email not confirmed")) {
             toast({
               title: "Email Not Confirmed",
               description: "Please check your email for the confirmation link or request a new one.",
@@ -169,11 +149,19 @@ const Auth = () => {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              email: email
+            }
+          }
         });
         
         if (error) throw error;
         
         if (data.user) {
+          // Manually create user profile in the profiles table
+          await createUserProfile(data.user.id, email);
+          
           if (data.session) {
             // User was immediately signed in
             toast({
