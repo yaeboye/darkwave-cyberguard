@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
+import { toast } from 'sonner';
 
 interface AuthContextType {
   user: User | null;
@@ -42,11 +43,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signOut = async () => {
-    setLoading(true);
     try {
-      await supabase.auth.signOut();
+      setLoading(true);
+      
+      // Clear local state first
+      setUser(null);
+      setSession(null);
+      
+      // Then tell Supabase to sign out
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Error signing out:', error);
+        toast('Failed to sign out. Please try again.');
+      } else {
+        toast('Successfully signed out');
+      }
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('Error in signOut function:', error);
+      toast('Failed to sign out. Please try again.');
     } finally {
       setLoading(false);
     }
