@@ -139,7 +139,7 @@ const Auth = () => {
         if (data.user) {
           toast({
             title: "Login Successful",
-            description: "Welcome back to CyberGuard!",
+            description: "Welcome back to DarkWave Cyber Guard!",
           });
           
           navigate('/');
@@ -150,6 +150,7 @@ const Auth = () => {
           email,
           password,
           options: {
+            emailRedirectTo: window.location.origin + '/auth',
             data: {
               email: email
             }
@@ -159,14 +160,22 @@ const Auth = () => {
         if (error) throw error;
         
         if (data.user) {
-          // Manually create user profile in the profiles table
-          await createUserProfile(data.user.id, email);
+          try {
+            // Manually create user profile in the profiles table
+            const profileResult = await createUserProfile(data.user.id, email);
+            if (!profileResult) {
+              console.warn('Failed to create user profile, but user was created');
+            }
+          } catch (profileError) {
+            console.error('Profile creation error:', profileError);
+            // Continue with the sign-up process even if profile creation fails
+          }
           
           if (data.session) {
             // User was immediately signed in
             toast({
               title: "Registration Successful",
-              description: "Welcome to CyberGuard!",
+              description: "Welcome to DarkWave Cyber Guard!",
             });
             navigate('/');
           } else {
@@ -202,8 +211,8 @@ const Auth = () => {
           <CyberHeader 
             title={isLogin ? "Secure Login" : "Create Account"} 
             subtitle={isLogin 
-              ? "Access your secure CyberGuard tools and password vault" 
-              : "Join CyberGuard to secure your digital life"
+              ? "Access your secure DarkWave Cyber Guard tools and password vault" 
+              : "Join DarkWave Cyber Guard to secure your digital life"
             }
           />
           
