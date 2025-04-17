@@ -2,7 +2,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Shield, User, Cpu, Code, Database, Lock, Key, FileText, RefreshCw, AlertTriangle, Wifi, Search, Globe, Link, Server } from 'lucide-react';
+import { Shield, User, Cpu, Code, Database, Lock, Key, FileText, RefreshCw, AlertTriangle, Wifi, Search, Globe, Link, Server, Layout as LayoutIcon } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const AboutUs = () => {
@@ -140,7 +140,7 @@ const AboutUs = () => {
                       <span className="text-sm text-gray-300">CSS & Styling</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Layout className="h-4 w-4 text-cyber-pink" />
+                      <LayoutIcon className="h-4 w-4 text-cyber-pink" />
                       <span className="text-sm text-gray-300">Page Structure</span>
                     </div>
                     <div className="flex items-center space-x-2">
