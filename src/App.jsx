@@ -18,6 +18,7 @@ import PasswordManager from "./pages/tools/PasswordManager";
 import Feedback from "./pages/Feedback";
 import NewsSection from "./components/NewsSection";
 import Auth from "./pages/Auth";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/about-us" element={<AboutUs />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

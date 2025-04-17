@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Github, Linkedin, Mail, Newspaper } from 'lucide-react';
+import { Shield, Github, Linkedin, Mail, Newspaper, Users } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -39,6 +39,10 @@ const Footer = () => {
               <li><Link to="/news" className="text-gray-400 hover:text-cyber-blue transition-colors">News</Link></li>
               <li><Link to="/tools" className="text-gray-400 hover:text-cyber-blue transition-colors">Tools</Link></li>
               <li><Link to="/feedback" className="text-gray-400 hover:text-cyber-blue transition-colors">Feedback</Link></li>
+              <li><Link to="/about-us" className="text-gray-400 hover:text-cyber-blue transition-colors flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span>About Us</span>
+              </Link></li>
             </ul>
           </div>
           
@@ -54,7 +58,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} Satvik Jindal's CyberGuard. All rights reserved.
+            &copy; {new Date().getFullYear()} White Hat Team - VIT Chennai. All rights reserved.
           </p>
         </div>
       </div>
