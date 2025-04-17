@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -195,12 +194,12 @@ const Index = () => {
               <div className="md:w-1/2 mb-10 md:mb-0">
                 <h1 className="font-cyber text-4xl md:text-6xl font-bold mb-6">
                   <GlitchText 
-                    text="CYBER" 
+                    text="DARK" 
                     className="neon-text-blue" 
                     delay={300}
                   />
                   <GlitchText 
-                    text="GUARD" 
+                    text="WAVE" 
                     className="neon-text-pink" 
                     delay={600}
                   />
@@ -267,7 +266,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Add NewsSection component here to display it on the homepage */}
         <NewsSection />
       
         <section id="tools" className="py-16 bg-cyber-darkgray">
@@ -414,4 +412,3 @@ const Index = () => {
 };
 
 export default Index;
-

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Github, Linkedin, Mail, Newspaper, Users } from 'lucide-react';
@@ -11,7 +10,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Shield className="h-6 w-6 text-cyber-blue" />
-              <span className="font-cyber font-bold text-lg neon-text-blue">Satvik's<span className="neon-text-pink">CyberGuard</span></span>
+              <span className="font-cyber font-bold text-lg neon-text-blue">DarkWave<span className="neon-text-pink">Cyber Guard</span></span>
             </div>
             <p className="text-gray-400 text-sm">
               Securing your digital future with cutting-edge cybersecurity tools and resources.
@@ -58,7 +57,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} White Hat Team - VIT Chennai. All rights reserved.
+            &copy; {new Date().getFullYear()} DarkWave Cyber Guard. All rights reserved.
           </p>
         </div>
       </div>
